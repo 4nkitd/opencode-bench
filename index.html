@@ -18,7 +18,10 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.55}
-.wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+.wrap{max-width:1720px;margin:0 auto;padding:0 32px}
+.split{display:grid;grid-template-columns:minmax(0,10fr) minmax(0,4fr);gap:40px;align-items:start}
+.split>.side{position:sticky;top:24px}
+@media(max-width:1100px){.split{grid-template-columns:1fr}.split>.side{position:static}}
 .lbl{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-dim)}
 .green{color:var(--green)}.red{color:var(--red)}.amber{color:var(--amber)}
 
@@ -61,7 +64,8 @@ section{margin-top:72px}
 .axis span:first-child{transform:none}
 .axis span:last-child{transform:translateX(-100%)}
 
-.tasks{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin-top:16px}
+.tasks{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px}
+@media(max-width:1100px){.tasks{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}}
 .task{background:var(--card);border:1px solid var(--border);padding:16px;display:flex;flex-direction:column;gap:10px;transition:border-color .15s ease}
 .task:hover{border-color:#3f3f3f}
 .task-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
@@ -123,20 +127,15 @@ footer .harness{font-family:var(--mono);font-size:12.5px}
     <div class="hstats" id="hstats"></div>
   </header>
 
+  <div class="split">
+  <div class="main">
+
   <section id="sec-board">
     <div class="sec-head">
       <h2>Leaderboard</h2>
       <span class="sec-note">3 attempts per task &middot; ties broken by cost</span>
     </div>
     <div id="board"></div>
-  </section>
-
-  <section id="sec-tasks">
-    <div class="sec-head">
-      <h2>Task Examples</h2>
-      <span class="sec-note">what each task measures</span>
-    </div>
-    <div class="tasks" id="tasks"></div>
   </section>
 
   <section id="sec-matrix">
@@ -162,6 +161,20 @@ footer .harness{font-family:var(--mono);font-size:12.5px}
       </div>
     </div>
   </section>
+
+  </div>
+
+  <aside class="side">
+  <section id="sec-tasks">
+    <div class="sec-head">
+      <h2>Task Examples</h2>
+      <span class="sec-note">what each task measures</span>
+    </div>
+    <div class="tasks" id="tasks"></div>
+  </section>
+  </aside>
+
+  </div>
 
   <footer id="foot"></footer>
 </div>
