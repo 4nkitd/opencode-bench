@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	_ "modernc.org/sqlite"
@@ -40,7 +41,27 @@ func main() {
 	only := flag.String("only", "", "run only these scenarios (comma-separated)")
 	keep := flag.Bool("keep", false, "keep work dirs after run")
 	out := flag.String("out", "results", "results output dir")
+	parallel := flag.Int("parallel", 4, "concurrent benchmark runs")
+	report := flag.String("report", "", "regenerate HTML report from comma-separated result JSON files")
 	flag.Parse()
+
+	if *report != "" {
+		var all []Result
+		for _, f := range strings.Split(*report, ",") {
+			b, err := os.ReadFile(strings.TrimSpace(f))
+			must(err)
+			var rs []Result
+			must(json.Unmarshal(b, &rs))
+			all = append(all, rs...)
+		}
+		stamp := time.Now().Format("20060102-150405")
+		must(os.MkdirAll(*out, 0o755))
+		htmlPath := filepath.Join(*out, "report-"+stamp+".html")
+		must(os.WriteFile(htmlPath, []byte(buildHTMLReport(all, stamp)), 0o644))
+		printTable(all)
+		fmt.Println("report:", htmlPath)
+		return
+	}
 
 	if *models == "" {
 		fmt.Fprintln(os.Stderr, "usage: opencode-bench -models provider/model[,provider/model...]")
@@ -57,28 +78,59 @@ func main() {
 	}
 
 	must(os.MkdirAll(*out, 0o755))
-	var results []Result
+
+	type job struct {
+		idx   int
+		model string
+		sc    Scenario
+	}
+	var jobs []job
 	for _, model := range strings.Split(*models, ",") {
 		model = strings.TrimSpace(model)
+		if model == "" {
+			continue
+		}
 		for _, sc := range scenarios {
-			fmt.Printf("== %s | %s\n", model, sc.Name)
-			r := runOne(root, sc, model, *keep)
-			results = append(results, r)
+			jobs = append(jobs, job{idx: len(jobs), model: model, sc: sc})
+		}
+	}
+
+	results := make([]Result, len(jobs))
+	sem := make(chan struct{}, *parallel)
+	var wg sync.WaitGroup
+	var logMu sync.Mutex
+	for _, j := range jobs {
+		wg.Add(1)
+		go func(j job) {
+			defer wg.Done()
+			sem <- struct{}{}
+			defer func() { <-sem }()
+			logMu.Lock()
+			fmt.Printf("== start %s | %s\n", j.model, j.sc.Name)
+			logMu.Unlock()
+			r := runOne(root, j.sc, j.model, *keep)
+			results[j.idx] = r
 			status := "FAIL"
 			if r.Passed {
 				status = "PASS"
 			}
-			fmt.Printf("   %s  %.0fs  $%.4f\n", status, r.DurationS, r.CostUSD)
-		}
+			logMu.Lock()
+			fmt.Printf("== done  %s | %-24s %s  %.0fs  $%.4f\n", j.model, j.sc.Name, status, r.DurationS, r.CostUSD)
+			logMu.Unlock()
+		}(j)
 	}
+	wg.Wait()
 
 	stamp := time.Now().Format("20060102-150405")
 	jsonPath := filepath.Join(*out, "run-"+stamp+".json")
 	b, _ := json.MarshalIndent(results, "", "  ")
 	must(os.WriteFile(jsonPath, b, 0o644))
+	htmlPath := filepath.Join(*out, "report-"+stamp+".html")
+	must(os.WriteFile(htmlPath, []byte(buildHTMLReport(results, stamp)), 0o644))
 	fmt.Println()
 	printTable(results)
 	fmt.Println("\nresults:", jsonPath)
+	fmt.Println("report: ", htmlPath)
 }
 
 func loadScenarios(dir, only string) ([]Scenario, error) {
