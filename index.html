@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#151515">
+<title>opencode-bench</title>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><rect width="16" height="16" fill="%23151515"/><rect x="3" y="3" width="10" height="10" fill="%23ececec"/></svg>'>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#151515; --card:#1d1d1d; --muted:#232323; --border:#2a2a2a;
+  --fg:#ececec; --fg-muted:#b3b3b3; --fg-dim:#7d7d7d;
+  --green:#5cb87c; --red:#d45f52; --amber:#d1a243;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:13px;line-height:1.5}
+.wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+.lbl{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-dim)}
+.green{color:var(--green)}.red{color:var(--red)}.amber{color:var(--amber)}
+
+.hero{padding:88px 0 24px;text-align:center}
+.hero h1{font-size:clamp(30px,6vw,40px);font-weight:500;letter-spacing:-.02em}
+.tagline{margin:16px auto 0;max-width:620px;color:var(--fg-muted);font-size:13.5px;line-height:1.65}
+.hstats{display:flex;justify-content:center;align-items:center;margin-top:52px}
+.hstat{padding:0 42px}
+.hstat b{display:block;font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:500;font-size:clamp(40px,7vw,56px);line-height:1;letter-spacing:-.02em}
+.hstat span{display:block;margin-top:12px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-dim)}
+.hdiv{width:1.5px;height:52px;background:rgba(236,236,236,.25);flex:none}
+
+section{margin-top:72px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:1px solid var(--border);padding-bottom:10px}
+.sec-head h2{font-size:17px;font-weight:500;letter-spacing:-.01em}
+.sec-note{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-dim);text-align:right}
+
+.lb-head,.lb-row,.lb-axis{display:flex;align-items:center;gap:14px}
+.lb-head{padding:12px 0 8px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-dim)}
+.lb-row{padding:8px 0;border-bottom:1px solid rgba(42,42,42,.4)}
+.lb-row:hover{background:rgba(236,236,236,.03)}
+.rank{flex:0 0 22px;text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:11px;color:var(--fg-dim)}
+.who{flex:1 1 auto;min-width:0;display:flex;align-items:baseline;gap:8px;overflow:hidden}
+.name{font-family:var(--mono);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prov{font-family:var(--mono);font-size:11px;color:var(--fg-muted);white-space:nowrap;flex:none}
+.barcol{flex:0 0 180px}
+.track{display:block;position:relative;height:20px;background:rgba(35,35,35,.25)}
+.fill{position:absolute;top:0;bottom:0;left:0}
+.cols{flex:0 0 auto;display:flex}
+.col{margin-left:10px;text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12px;white-space:nowrap;color:var(--fg-muted)}
+.col.pct{width:58px;color:var(--fg)}
+.col.kn{width:54px}
+.col.cost{width:60px}
+.col.solve{width:70px}
+.col.time{width:64px}
+.lb-head .col{color:var(--fg-dim)}
+.lb-axis{padding-top:6px}
+.axis{position:relative;height:14px;display:block}
+.axis span{position:absolute;top:0;transform:translateX(-50%);font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:10px;color:var(--fg-dim)}
+.axis span:first-child{transform:none}
+.axis span:last-child{transform:translateX(-100%)}
+
+.tasks{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin-top:16px}
+.task{background:var(--card);border:1px solid var(--border);padding:16px;display:flex;flex-direction:column;gap:10px;transition:border-color .15s ease}
+.task:hover{border-color:#3f3f3f}
+.task-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sc{font-family:var(--mono);font-size:12px}
+.tmeta{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--fg-muted)}
+.dot{width:7px;height:7px;border-radius:50%;flex:none}
+.diff{font-family:var(--mono);font-size:11px;color:var(--fg-muted)}
+.goal{font-size:12.5px;line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.signal{font-size:11.5px;line-height:1.6;color:var(--fg-muted)}
+.task-foot{margin-top:auto;padding-top:10px;border-top:1px solid rgba(42,42,42,.4);display:flex;align-items:center;justify-content:space-between}
+.task-foot .kn{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:11px}
+
+.mx-wrap{margin-top:16px;overflow-x:auto;border:1px solid var(--border);background:var(--card)}
+.mx{display:grid;min-width:720px}
+.mxc{padding:8px 10px;border-bottom:1px solid rgba(42,42,42,.4);font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12px;display:flex;align-items:center;min-width:0}
+.mxc.last{border-bottom:none}
+.mxh{font-size:10px;color:var(--fg-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:12px 10px}
+.mxc.c{justify-content:center;text-align:center}
+.mh{min-width:0;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mn{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;min-width:0}
+.na{color:var(--fg-dim)}
+
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.ccard{background:var(--card);border:1px solid var(--border);padding:16px;min-width:0}
+.cbox{position:relative;height:280px;margin-top:14px}
+
+footer{margin-top:80px;border-top:1px solid var(--border);padding:16px 0 48px;display:flex;justify-content:space-between;gap:8px 24px;flex-wrap:wrap;font-size:11px;color:var(--fg-dim)}
+footer .harness{font-family:var(--mono);font-size:11px}
+.err{padding:16px;border:1px solid var(--border);background:var(--card);color:var(--red);font-family:var(--mono);font-size:12px;margin-top:16px}
+
+@media(max-width:900px){
+  .charts{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .col.solve,.col.time{display:none}
+  .barcol{flex-basis:120px}
+  section{margin-top:56px}
+}
+@media(max-width:600px){
+  .hero{padding:56px 0 16px}
+  .hstats{flex-wrap:wrap;row-gap:28px}
+  .hstat{flex:0 0 46%;padding:0}
+  .hdiv{display:none}
+  .barcol{flex-basis:64px}
+  .col.cost{display:none}
+  .prov{display:none}
+  .rank{flex-basis:16px}
+  .axq{display:none}
+  .lb-head,.lb-row,.lb-axis{gap:10px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>opencode-bench</h1>
+    <p class="tagline">Measuring coding agents on real production tasks &mdash; payment webhooks, currency handling, storefront widgets, CLI parsing and live-incident debugging.</p>
+    <div class="hstats" id="hstats"></div>
+  </header>
+
+  <section id="sec-board">
+    <div class="sec-head">
+      <h2>Leaderboard</h2>
+      <span class="sec-note">3 attempts per task &middot; ties broken by cost</span>
+    </div>
+    <div id="board"></div>
+  </section>
+
+  <section id="sec-tasks">
+    <div class="sec-head">
+      <h2>Task Examples</h2>
+      <span class="sec-note">what each task measures</span>
+    </div>
+    <div class="tasks" id="tasks"></div>
+  </section>
+
+  <section id="sec-matrix">
+    <div class="sec-head">
+      <h2>Results Matrix</h2>
+      <span class="sec-note">passes / attempts per cell</span>
+    </div>
+    <div class="mx-wrap"><div class="mx" id="matrix"></div></div>
+  </section>
+
+  <section id="sec-charts">
+    <div class="sec-head">
+      <h2>Charts</h2>
+    </div>
+    <div class="charts">
+      <div class="ccard">
+        <span class="lbl">pass@3 by model</span>
+        <div class="cbox"><canvas id="passChart" aria-label="Pass rate by model"></canvas></div>
+      </div>
+      <div class="ccard">
+        <span class="lbl">cost vs pass@3</span>
+        <div class="cbox"><canvas id="valueChart" aria-label="Cost versus pass rate"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const short = m => String(m).split('/').pop();
+
+const FAMILIES = [
+  {key:'anthropic', re:/claude|anthropic/i, color:'#d97757', label:'anthropic'},
+  {key:'deepseek',  re:/deepseek/i,          color:'#8a7bd8', label:'deepseek'},
+  {key:'google',    re:/gemini|google/i,     color:'#6b93e8', label:'google'},
+  {key:'moonshot',  re:/kimi|moonshot/i,     color:'#4db8a4', label:'moonshot'},
+  {key:'zai',       re:/glm|zai/i,           color:'#a9b94e', label:'zai'},
+  {key:'minimax',   re:/minimax/i,           color:'#d6709c', label:'minimax'},
+];
+const familyOf = model => FAMILIES.find(f => f.re.test(model))
+  || {key:'other', color:'#8a8a8a', label:String(model).split('/')[0].toLowerCase()};
+
+const LANG = {
+  go:{color:'#4d9ab8'}, javascript:{color:'#c9b458'}, typescript:{color:'#5b8def'},
+  python:{color:'#6b93e8'}, rust:{color:'#c97b4a'},
+};
+const langDot = l => (LANG[String(l||'').toLowerCase()] || {color:'#8a8a8a'}).color;
+
+const fmtDur = s => {
+  s = Math.round(s);
+  return s < 60 ? s + 's' : Math.floor(s/60) + 'm ' + String(s%60).padStart(2,'0') + 's';
+};
+
+fetch('./data.json')
+  .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+  .then(render)
+  .catch(e => {
+    document.getElementById('board').innerHTML =
+      '<div class="err">failed to load ./data.json &mdash; ' + esc(e.message) + '</div>';
+  });
+
+function render(D) {
+  const scenarios = (D.scenarios || []).slice();
+  const runs = D.runs || [];
+  const scenNames = scenarios.map(s => s.name);
+  for (const r of runs) {
+    if (!scenNames.includes(r.scenario)) {
+      scenNames.push(r.scenario);
+      scenarios.push({name: r.scenario});
+    }
+  }
+
+  const models = new Map();
+  const cells = new Map();
+  const ckey = (m, s) => m + ' ' + s;
+  let totalCost = 0;
+  for (const r of runs) {
+    let m = models.get(r.model);
+    if (!m) {
+      m = {model: r.model, fam: familyOf(r.model), pass: 0, total: 0, cost: 0, time: 0};
+      models.set(r.model, m);
+    }
+    m.total++;
+    if (r.passed) m.pass++;
+    m.cost += r.cost_usd || 0;
+    m.time += r.duration_s || 0;
+    totalCost += r.cost_usd || 0;
+    let c = cells.get(ckey(r.model, r.scenario));
+    if (!c) { c = {pass: 0, total: 0}; cells.set(ckey(r.model, r.scenario), c); }
+    c.total++;
+    if (r.passed) c.pass++;
+  }
+
+  const rate = m => m.total ? m.pass / m.total * 100 : 0;
+  const stats = [...models.values()].sort((a, b) =>
+    rate(b) - rate(a) || a.cost - b.cost || a.time - b.time || a.model.localeCompare(b.model));
+
+  document.getElementById('hstats').innerHTML = [
+    [stats.length, 'models'],
+    [scenNames.length, 'tasks'],
+    [runs.length, 'attempts'],
+    ['$' + totalCost.toFixed(2), 'total spend'],
+  ].map(([v, l], i) =>
+    (i ? '<div class="hdiv"></div>' : '') +
+    '<div class="hstat"><b>' + esc(v) + '</b><span>' + esc(l) + '</span></div>'
+  ).join('');
+
+  const colHeads =
+    '<span class="cols">' +
+    '<span class="col pct">pass@3</span>' +
+    '<span class="col kn">passes</span>' +
+    '<span class="col cost">cost</span>' +
+    '<span class="col solve">$/solve</span>' +
+    '<span class="col time">avg time</span>' +
+    '</span>';
+
+  let board =
+    '<div class="lb-head"><span class="rank">#</span><span class="who">model</span>' +
+    '<span class="barcol"></span>' + colHeads + '</div>';
+
+  board += stats.map((m, i) => {
+    const pct = rate(m);
+    return '<div class="lb-row">' +
+      '<span class="rank">' + (i + 1) + '</span>' +
+      '<span class="who"><span class="name">' + esc(m.model) + '</span>' +
+      '<span class="prov">[' + esc(m.fam.label) + ']</span></span>' +
+      '<span class="barcol"><span class="track">' +
+      '<span class="fill" style="width:' + pct.toFixed(1) + '%;background:' + m.fam.color + '"></span>' +
+      '</span></span>' +
+      '<span class="cols">' +
+      '<span class="col pct">' + pct.toFixed(1) + '</span>' +
+      '<span class="col kn">' + m.pass + '/' + m.total + '</span>' +
+      '<span class="col cost">$' + m.cost.toFixed(2) + '</span>' +
+      '<span class="col solve">' + (m.pass ? '$' + (m.cost / m.pass).toFixed(3) : '&mdash;') + '</span>' +
+      '<span class="col time">' + fmtDur(m.time / m.total) + '</span>' +
+      '</span></div>';
+  }).join('');
+
+  board +=
+    '<div class="lb-axis"><span class="rank"></span><span class="who"></span>' +
+    '<span class="barcol"><span class="axis">' +
+    '<span style="left:0">0</span><span class="axq" style="left:25%">25</span><span style="left:50%">50</span>' +
+    '<span class="axq" style="left:75%">75</span><span style="left:100%">100</span>' +
+    '</span></span><span class="cols"></span></div>';
+  document.getElementById('board').innerHTML = board;
+
+  document.getElementById('tasks').innerHTML = scenarios.map(s => {
+    let solved = 0, withRuns = 0;
+    for (const m of stats) {
+      const c = cells.get(ckey(m.model, s.name));
+      if (c && c.total > 0) {
+        withRuns++;
+        if (c.pass === c.total) solved++;
+      }
+    }
+    const cls = withRuns && solved === withRuns ? 'green' : solved === 0 ? 'red' : 'amber';
+    return '<div class="task">' +
+      '<div class="task-top"><span class="sc">' + esc(s.name) + '</span>' +
+      '<span class="tmeta"><span class="dot" style="background:' + langDot(s.lang) + '"></span>' + esc(s.lang || '') +
+      '<span class="diff">[' + esc(String(s.difficulty || '').toLowerCase()) + ']</span></span></div>' +
+      '<div class="goal"' + (s.title ? ' title="' + esc(s.title) + '"' : '') + '>' + esc(s.goal || '') + '</div>' +
+      '<div><div class="lbl">why it matters</div>' +
+      '<div class="signal">' + esc(s.signal || '') + '</div></div>' +
+      '<div class="task-foot"><span class="lbl">solved reliably</span>' +
+      '<span class="kn ' + cls + '">' + solved + '/' + withRuns + '</span></div>' +
+      '</div>';
+  }).join('');
+
+  const ncol = scenNames.length + 1;
+  let mx = '<div class="mxc mxh corner"></div>' + scenNames.map(s =>
+    '<div class="mxc mxh c" title="' + esc(s) + '"><span class="mh">' + esc(s) + '</span></div>').join('');
+  stats.forEach((m, ri) => {
+    const last = ri === stats.length - 1 ? ' last' : '';
+    mx += '<div class="mxc' + last + '"><span class="mn" title="' + esc(m.model) + '">' + esc(short(m.model)) + '</span></div>';
+    for (const s of scenNames) {
+      const c = cells.get(ckey(m.model, s));
+      if (!c) {
+        mx += '<div class="mxc c na' + last + '">&mdash;</div>';
+      } else {
+        const cls = c.pass === c.total ? 'green' : c.pass === 0 ? 'red' : 'amber';
+        mx += '<div class="mxc c ' + cls + last + '">' + c.pass + '/' + c.total + '</div>';
+      }
+    }
+  });
+  const mxEl = document.getElementById('matrix');
+  mxEl.style.gridTemplateColumns = 'minmax(170px,1.5fr) repeat(' + scenNames.length + ',minmax(80px,1fr))';
+  mxEl.innerHTML = mx;
+
+  document.getElementById('foot').innerHTML =
+    '<span>generated ' + esc(D.generated_at || '') + '</span>' +
+    '<span class="harness">fresh git repo per attempt -&gt; opencode run -&gt; hidden tests -&gt; verify</span>';
+
+  if (!window.Chart) return;
+  const MONOF = "ui-monospace,SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace";
+  Chart.defaults.font.family = "system-ui,-apple-system,'Segoe UI',Roboto,sans-serif";
+  Chart.defaults.font.size = 10;
+  Chart.defaults.color = '#7d7d7d';
+  const tooltip = {
+    backgroundColor: '#1d1d1d', borderColor: '#2a2a2a', borderWidth: 1, cornerRadius: 0,
+    padding: 10, displayColors: false, titleColor: '#ececec', bodyColor: '#b3b3b3',
+    titleFont: {family: MONOF, size: 11}, bodyFont: {family: MONOF, size: 11},
+  };
+
+  new Chart(document.getElementById('passChart'), {
+    type: 'bar',
+    data: {
+      labels: stats.map(m => short(m.model)),
+      datasets: [{
+        data: stats.map(m => +rate(m).toFixed(1)),
+        backgroundColor: stats.map(m => m.fam.color),
+        borderWidth: 0, borderRadius: 0, barThickness: 16,
+      }],
+    },
+    options: {
+      indexAxis: 'y', maintainAspectRatio: false,
+      plugins: {
+        legend: {display: false},
+        tooltip: Object.assign({}, tooltip, {callbacks: {
+          label: c => ' ' + c.parsed.x.toFixed(1) + '%  (' + stats[c.dataIndex].pass + '/' + stats[c.dataIndex].total + ')',
+        }}),
+      },
+      scales: {
+        x: {min: 0, max: 100, grid: {color: '#2a2a2a', drawTicks: false}, border: {display: false},
+            ticks: {font: {family: MONOF, size: 10}, color: '#7d7d7d', padding: 6}},
+        y: {grid: {display: false}, border: {display: false},
+            ticks: {font: {family: MONOF, size: 11}, color: '#b3b3b3', padding: 8}},
+      },
+    },
+  });
+
+  new Chart(document.getElementById('valueChart'), {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        data: stats.map(m => ({x: +m.cost.toFixed(2), y: +rate(m).toFixed(1)})),
+        backgroundColor: stats.map(m => m.fam.color),
+        pointStyle: 'rect', pointRadius: 5, pointHoverRadius: 7, pointBorderWidth: 0,
+      }],
+    },
+    options: {
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {display: false},
+        tooltip: Object.assign({}, tooltip, {callbacks: {
+          title: items => short(stats[items[0].dataIndex].model),
+          label: c => ' $' + c.parsed.x.toFixed(2) + '  ' + c.parsed.y.toFixed(1) + '%',
+        }}),
+      },
+      scales: {
+        x: {beginAtZero: true, grid: {color: '#2a2a2a', drawTicks: false}, border: {display: false},
+            title: {display: true, text: 'total cost (usd)', color: '#7d7d7d', font: {size: 10}},
+            ticks: {font: {family: MONOF, size: 10}, color: '#7d7d7d', padding: 6,
+                    callback: v => '$' + v}},
+        y: {min: 0, max: 100, grid: {color: '#2a2a2a', drawTicks: false}, border: {display: false},
+            title: {display: true, text: 'pass@3 (%)', color: '#7d7d7d', font: {size: 10}},
+            ticks: {font: {family: MONOF, size: 10}, color: '#7d7d7d', padding: 8}},
+      },
+    },
+  });
+}
+</script>
+</body>
+</html>
