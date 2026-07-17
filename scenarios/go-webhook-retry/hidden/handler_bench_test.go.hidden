@@ -1,0 +1,41 @@
+package main
+
+import (
+	"bytes"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+)
+
+func do(t *testing.T, body string, sig string) *httptest.ResponseRecorder {
+	t.Helper()
+	req := httptest.NewRequest(http.MethodPost, "/webhooks/discounts", bytes.NewBufferString(body))
+	req.Header.Set("X-Shopify-Hmac-Sha256", sig)
+	rr := httptest.NewRecorder()
+	DiscountWebhookHandler(rr, req)
+	return rr
+}
+
+func TestValidWebhook(t *testing.T) {
+	body := `{"shop":"kuuraii.myshopify.com","title":"KUURAII15"}`
+	rr := do(t, body, computeHMAC([]byte(body)))
+	if rr.Code != http.StatusOK {
+		t.Fatalf("valid webhook: got %d want 200", rr.Code)
+	}
+}
+
+func TestInvalidSignatureRejected(t *testing.T) {
+	body := `{"shop":"kuuraii.myshopify.com","title":"X"}`
+	rr := do(t, body, "bogus-signature")
+	if rr.Code != http.StatusUnauthorized {
+		t.Fatalf("bad hmac: got %d want 401", rr.Code)
+	}
+}
+
+func TestProcessingFailureReturns500(t *testing.T) {
+	body := `{"shop":"","title":"NoShop"}`
+	rr := do(t, body, computeHMAC([]byte(body)))
+	if rr.Code != http.StatusInternalServerError {
+		t.Fatalf("failed processing: got %d want 500 so platform retries", rr.Code)
+	}
+}

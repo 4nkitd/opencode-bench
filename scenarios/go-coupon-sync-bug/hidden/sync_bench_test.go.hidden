@@ -1,0 +1,50 @@
+package couponsync
+
+import (
+	"errors"
+	"testing"
+	"time"
+)
+
+type slowAPI struct {
+	block chan struct{}
+}
+
+func (s *slowAPI) PushCoupon(code string) error {
+	<-s.block
+	return nil
+}
+
+func TestConcurrentSyncBlocked(t *testing.T) {
+	api := &slowAPI{block: make(chan struct{})}
+	s := NewSyncer(api, []*Coupon{{Code: "A"}})
+
+	done := make(chan error, 1)
+	go func() { done <- s.SyncPending() }()
+	time.Sleep(50 * time.Millisecond)
+
+	if err := s.SyncPending(); !errors.Is(err, ErrSyncInFlight) {
+		t.Fatalf("concurrent sync: got %v want ErrSyncInFlight", err)
+	}
+
+	close(api.block)
+	if err := <-done; err != nil {
+		t.Fatalf("first sync: %v", err)
+	}
+	if err := s.SyncPending(); err != nil {
+		t.Fatalf("lock must release after sync completes, got %v", err)
+	}
+}
+
+func TestLockReleasedAfterError(t *testing.T) {
+	api := &fakeAPI{failCodes: map[string]int{"X": 1}}
+	s := NewSyncer(api, []*Coupon{{Code: "X"}})
+
+	_ = s.SyncPending()
+	if err := s.SyncPending(); errors.Is(err, ErrSyncInFlight) {
+		t.Fatal("lock stuck after a failed sync")
+	}
+	if s.PendingCount() != 0 {
+		t.Fatalf("retry should have synced X, %d pending", s.PendingCount())
+	}
+}

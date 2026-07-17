@@ -1,0 +1,27 @@
+package portlist
+
+import (
+	"reflect"
+	"testing"
+)
+
+func TestParseLsof(t *testing.T) {
+	in := "p501\ncnode\nn*:3000\nn*:3000\nn127.0.0.1:9229\np842\ncpostgres\nn[::1]:5432\nn127.0.0.1:5432\np900\ncbroken\nnlocalhost\nn:\np901\ncGoogle Chrome\nn*:7000\n"
+	want := []Listener{
+		{PID: 501, Command: "node", Port: 3000, Addr: "*"},
+		{PID: 501, Command: "node", Port: 9229, Addr: "127.0.0.1"},
+		{PID: 842, Command: "postgres", Port: 5432, Addr: "::1"},
+		{PID: 842, Command: "postgres", Port: 5432, Addr: "127.0.0.1"},
+		{PID: 901, Command: "Google Chrome", Port: 7000, Addr: "*"},
+	}
+	got := ParseLsof(in)
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("got %+v\nwant %+v", got, want)
+	}
+}
+
+func TestParseLsofEmpty(t *testing.T) {
+	if got := ParseLsof(""); len(got) != 0 {
+		t.Fatalf("empty input: got %+v", got)
+	}
+}
