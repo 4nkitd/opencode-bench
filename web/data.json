@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-17T18:03:51+05:30",
+  "generated_at": "2026-07-17T18:36:38+05:30",
   "scenarios": [
     {
       "name": "go-coupon-sync-bug",
@@ -1883,6 +1883,126 @@
       "tokens_in": 69803,
       "tokens_out": 1010,
       "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-3453855773"
+    },
+    {
+      "scenario": "go-coupon-sync-bug",
+      "model": "opencode-go/kimi-k3",
+      "variant": "max",
+      "attempt": 3,
+      "passed": true,
+      "duration_s": 118,
+      "cost_usd": 0.0825,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "work_dir": ""
+    },
+    {
+      "scenario": "go-coupon-sync-bug",
+      "model": "opencode-go/kimi-k3",
+      "variant": "max",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 133,
+      "cost_usd": 0.095,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "work_dir": ""
+    },
+    {
+      "scenario": "go-portlist",
+      "model": "opencode-go/kimi-k3",
+      "variant": "max",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 179,
+      "cost_usd": 0.116,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "work_dir": ""
+    },
+    {
+      "scenario": "js-cart-progress",
+      "model": "opencode-go/kimi-k3",
+      "variant": "max",
+      "attempt": 3,
+      "passed": true,
+      "duration_s": 107,
+      "cost_usd": 0.076,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "work_dir": ""
+    },
+    {
+      "scenario": "go-currency-market",
+      "model": "opencode-go/kimi-k3",
+      "variant": "max",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 120,
+      "cost_usd": 0.0939,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "work_dir": ""
+    },
+    {
+      "scenario": "go-webhook-retry",
+      "model": "opencode-go/kimi-k3",
+      "variant": "max",
+      "attempt": 2,
+      "passed": false,
+      "duration_s": 140,
+      "cost_usd": 0.1055,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "work_dir": ""
+    },
+    {
+      "scenario": "go-portlist",
+      "model": "opencode-go/kimi-k3",
+      "variant": "max",
+      "attempt": 3,
+      "passed": true,
+      "duration_s": 199,
+      "cost_usd": 0.1446,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "work_dir": ""
+    },
+    {
+      "scenario": "go-portlist",
+      "model": "opencode-go/kimi-k3",
+      "variant": "max",
+      "attempt": 2,
+      "passed": false,
+      "duration_s": 241,
+      "cost_usd": 0.122,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "work_dir": ""
+    },
+    {
+      "scenario": "go-webhook-retry",
+      "model": "opencode-go/kimi-k3",
+      "variant": "max",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 131,
+      "cost_usd": 0.0984,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "work_dir": ""
+    },
+    {
+      "scenario": "go-webhook-retry",
+      "model": "opencode-go/kimi-k3",
+      "variant": "max",
+      "attempt": 3,
+      "passed": false,
+      "duration_s": 243,
+      "cost_usd": 0.0983,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "work_dir": ""
     }
   ]
 }
