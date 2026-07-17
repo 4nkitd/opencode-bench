@@ -1,0 +1,86 @@
+package discountsync
+
+import (
+	"errors"
+	"strings"
+	"testing"
+)
+
+type scriptedClient struct {
+	queries []string
+	handler func(q string) (*GQLResponse, error)
+}
+
+func (s *scriptedClient) Query(q string) (*GQLResponse, error) {
+	s.queries = append(s.queries, q)
+	return s.handler(q)
+}
+
+func TestModernAPIReturnsCurrencies(t *testing.T) {
+	c := &scriptedClient{handler: func(q string) (*GQLResponse, error) {
+		if !strings.Contains(q, "presentmentCurrencies") {
+			t.Fatal("first query must request presentmentCurrencies")
+		}
+		return &GQLResponse{Data: &DiscountData{Title: "KUURAII15", Code: "KUURAII15", PresentmentCurrencies: []string{"AED", "SAR"}}}, nil
+	}}
+	d, err := FetchDiscount(c, "gid://1")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if d.Title != "KUURAII15" || d.Code != "KUURAII15" || len(d.Currencies) != 2 {
+		t.Fatalf("bad discount: %+v", d)
+	}
+	if len(c.queries) != 1 {
+		t.Fatalf("expected 1 query, got %d", len(c.queries))
+	}
+}
+
+func TestOldAPIFallsBackWithoutField(t *testing.T) {
+	c := &scriptedClient{handler: nil}
+	c.handler = func(q string) (*GQLResponse, error) {
+		if strings.Contains(q, "presentmentCurrencies") {
+			return &GQLResponse{Errors: []GQLError{{Message: "Field 'presentmentCurrencies' doesn't exist on type 'DiscountNode'"}}}, nil
+		}
+		return &GQLResponse{Data: &DiscountData{Title: "Prestige15", Code: "PRESTIGE15"}}, nil
+	}
+	d, err := FetchDiscount(c, "gid://2")
+	if err != nil {
+		t.Fatalf("fallback should succeed, got %v", err)
+	}
+	if d.Code != "PRESTIGE15" {
+		t.Fatalf("bad discount: %+v", d)
+	}
+	if d.Currencies == nil || len(d.Currencies) != 0 {
+		t.Fatalf("fallback Currencies must be empty non-nil, got %#v", d.Currencies)
+	}
+	if len(c.queries) != 2 {
+		t.Fatalf("expected exactly 2 queries (original + fallback), got %d", len(c.queries))
+	}
+}
+
+func TestOtherGraphQLErrorNotRetried(t *testing.T) {
+	c := &scriptedClient{}
+	c.handler = func(q string) (*GQLResponse, error) {
+		return &GQLResponse{Errors: []GQLError{{Message: "Throttled"}}}, nil
+	}
+	_, err := FetchDiscount(c, "gid://3")
+	if err == nil {
+		t.Fatal("throttled error must be returned, not swallowed")
+	}
+	if len(c.queries) != 1 {
+		t.Fatalf("throttled must not be retried, got %d queries", len(c.queries))
+	}
+}
+
+func TestTransportErrorPropagates(t *testing.T) {
+	boom := errors.New("connection reset")
+	c := &scriptedClient{}
+	c.handler = func(q string) (*GQLResponse, error) { return nil, boom }
+	_, err := FetchDiscount(c, "gid://4")
+	if err == nil {
+		t.Fatal("transport error must propagate")
+	}
+	if len(c.queries) != 1 {
+		t.Fatalf("transport error must not be retried, got %d queries", len(c.queries))
+	}
+}

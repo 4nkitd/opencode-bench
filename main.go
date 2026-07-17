@@ -21,11 +21,17 @@ type Scenario struct {
 	Prompt     string `json:"prompt"`
 	VerifyCmd  string `json:"verify_cmd"`
 	TimeoutMin int    `json:"timeout_min"`
+	Title      string `json:"title"`
+	Lang       string `json:"lang"`
+	Difficulty string `json:"difficulty"`
+	Goal       string `json:"goal"`
+	Signal     string `json:"signal"`
 }
 
 type Result struct {
 	Scenario   string  `json:"scenario"`
 	Model      string  `json:"model"`
+	Attempt    int     `json:"attempt"`
 	Passed     bool    `json:"passed"`
 	DurationS  float64 `json:"duration_s"`
 	CostUSD    float64 `json:"cost_usd"`
@@ -42,7 +48,8 @@ func main() {
 	keep := flag.Bool("keep", false, "keep work dirs after run")
 	out := flag.String("out", "results", "results output dir")
 	parallel := flag.Int("parallel", 4, "concurrent benchmark runs")
-	report := flag.String("report", "", "regenerate HTML report from comma-separated result JSON files")
+	runs := flag.Int("runs", 1, "attempts per model+scenario pair")
+	report := flag.String("report", "", "rebuild web/data.json from comma-separated raw result JSON files")
 	flag.Parse()
 
 	if *report != "" {
@@ -54,12 +61,8 @@ func main() {
 			must(json.Unmarshal(b, &rs))
 			all = append(all, rs...)
 		}
-		stamp := time.Now().Format("20060102-150405")
-		must(os.MkdirAll(*out, 0o755))
-		htmlPath := filepath.Join(*out, "report-"+stamp+".html")
-		must(os.WriteFile(htmlPath, []byte(buildHTMLReport(all, stamp)), 0o644))
 		printTable(all)
-		fmt.Println("report:", htmlPath)
+		fmt.Println("data:", writeDataJSON(all))
 		return
 	}
 
@@ -80,9 +83,10 @@ func main() {
 	must(os.MkdirAll(*out, 0o755))
 
 	type job struct {
-		idx   int
-		model string
-		sc    Scenario
+		idx     int
+		model   string
+		sc      Scenario
+		attempt int
 	}
 	var jobs []job
 	for _, model := range strings.Split(*models, ",") {
@@ -91,7 +95,9 @@ func main() {
 			continue
 		}
 		for _, sc := range scenarios {
-			jobs = append(jobs, job{idx: len(jobs), model: model, sc: sc})
+			for a := 1; a <= *runs; a++ {
+				jobs = append(jobs, job{idx: len(jobs), model: model, sc: sc, attempt: a})
+			}
 		}
 	}
 
@@ -106,9 +112,10 @@ func main() {
 			sem <- struct{}{}
 			defer func() { <-sem }()
 			logMu.Lock()
-			fmt.Printf("== start %s | %s\n", j.model, j.sc.Name)
+			fmt.Printf("== start %s | %s #%d\n", j.model, j.sc.Name, j.attempt)
 			logMu.Unlock()
 			r := runOne(root, j.sc, j.model, *keep)
+			r.Attempt = j.attempt
 			results[j.idx] = r
 			status := "FAIL"
 			if r.Passed {
@@ -125,12 +132,10 @@ func main() {
 	jsonPath := filepath.Join(*out, "run-"+stamp+".json")
 	b, _ := json.MarshalIndent(results, "", "  ")
 	must(os.WriteFile(jsonPath, b, 0o644))
-	htmlPath := filepath.Join(*out, "report-"+stamp+".html")
-	must(os.WriteFile(htmlPath, []byte(buildHTMLReport(results, stamp)), 0o644))
 	fmt.Println()
 	printTable(results)
 	fmt.Println("\nresults:", jsonPath)
-	fmt.Println("report: ", htmlPath)
+	fmt.Println("data:   ", writeDataJSON(results))
 }
 
 func loadScenarios(dir, only string) ([]Scenario, error) {

@@ -1,5 +1,10 @@
 {
-  "prompt": "Implement the two stubbed functions in money.go for a payments service. FormatMinorUnits(amount int64, currency string) string: render a minor-unit amount as a plain decimal string using ISO 4217 exponents — 2 decimals default, 0 for JPY/KRW/VND, 3 for KWD/BHD/OMR; negative amounts keep a leading minus; e.g. (12345,\"INR\")=\"123.45\", (500,\"JPY\")=\"500\", (12345,\"KWD\")=\"12.345\", (5,\"USD\")=\"0.05\", (-70,\"USD\")=\"-0.70\". Currency codes are case-insensitive. CountriesForCurrency(currency string) []string: return ISO country codes for AED=[AE], SAR=[SA], KWD=[KW], INR=[IN], GBP=[GB], USD=[US], EUR=[DE FR IT ES NL] (that exact order), unknown=empty non-nil slice; case-insensitive. Run go test ./... to check.",
+  "prompt": "Implement the two stubbed functions in money.go for a payments service. FormatMinorUnits(amount int64, currency string) string: render a minor-unit amount as a plain decimal string using ISO 4217 exponents \u2014 2 decimals default, 0 for JPY/KRW/VND, 3 for KWD/BHD/OMR; negative amounts keep a leading minus; e.g. (12345,\"INR\")=\"123.45\", (500,\"JPY\")=\"500\", (12345,\"KWD\")=\"12.345\", (5,\"USD\")=\"0.05\", (-70,\"USD\")=\"-0.70\". Currency codes are case-insensitive. CountriesForCurrency(currency string) []string: return ISO country codes for AED=[AE], SAR=[SA], KWD=[KW], INR=[IN], GBP=[GB], USD=[US], EUR=[DE FR IT ES NL] (that exact order), unknown=empty non-nil slice; case-insensitive. Run go test ./... to check.",
   "verify_cmd": "go test ./...",
-  "timeout_min": 10
+  "timeout_min": 10,
+  "title": "Currency & Market Mapping",
+  "lang": "Go",
+  "difficulty": "Medium",
+  "goal": "Implement ISO 4217 minor-unit money formatting (0/2/3 decimal currencies, negatives) and currency-to-country market mapping from a written spec.",
+  "signal": "Pure spec-to-code fidelity under fintech edge cases: JPY has no decimals, KWD has three, -70 cents must render -0.70. Models that skim the spec fail on exponent edge cases."
 }

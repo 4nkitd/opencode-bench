@@ -1,0 +1,15 @@
+Rewrite index.html completely as a single static file replicating the DeepSWE (deepswe.datacurve.ai) design language exactly. It fetches ./data.json ({generated_at, scenarios:[{name,title,lang,difficulty,goal,signal}], runs:[{scenario,model,attempt,passed,duration_s,cost_usd,tokens_in,tokens_out}]}) and renders client-side. Site name: "opencode-bench"; tagline: "Measuring coding agents on real production tasks - payment webhooks, currency handling, storefront widgets, CLI parsing and live-incident debugging."
+
+DESIGN BRIEF (follow strictly):
+- Muted monochrome minimalism, dark theme: bg #151515, card #1d1d1d, muted #232323, border #2a2a2a, text near-white, muted-foreground ~72% gray. ZERO border-radius on content blocks. Color ONLY as semantic accents: pass green, fail red, and per-model-family hues (anthropic orange, deepseek purple, google blue, moonshot/kimi teal, zai/glm yellow-green, minimax pink).
+- Typography: system-ui sans; monospace (ui-monospace stack) for model names, ranks, and ALL numbers with tabular-nums. Headings font-medium (not bold) tracking-tight; hero h1 ~40px; big stat numbers 44-64px medium. Tiny uppercase labels with 0.12em letter-spacing. Data text 12-13px, meta 10-11px muted.
+- Hero: centered, h1, tagline, row of big stat counters (models / tasks / attempts / total spend) separated by thin 1.5px vertical divider lines at 25% foreground opacity.
+- Leaderboard: NOT a table - flex rows, border-b border at 40% opacity, py-2, hover bg subtle. Left: model name mono 13px + provider in muted 11px square brackets like [anthropic]. Right: fixed-width right-aligned tabular columns (Pass@3 %, passes k/n, cost, $/solve, avg time). Score as horizontal bar: h-5 track at muted 25% opacity, fill in the model family color, 0-100% axis labels in 10px muted below the list.
+- Aggregate attempts per model+scenario: cell = k passes of n attempts; model pass rate = total passes/total attempts; rank by pass rate then cost. Mark flaky cells (0<k<n) in amber.
+- Task Examples section: square-corner cards border bg-card p-4 hover:border-brighter, mono scenario name, tiny colored language dot + label, difficulty in square brackets like [hard], goal text 3-line clamp, then "why it matters" signal text in muted, and solved-reliably count.
+- Results matrix section: compact grid, k/n mono cells, green when k==n, red when k==0, amber otherwise.
+- Charts: Chart.js from CDN, monochrome styling with family-color fills only: pass-rate horizontal bars with per-family colors, cost-vs-passrate scatter. Grid lines #2a2a2a, labels muted gray, no legends.
+- Footer: muted 11px, generated_at timestamp and harness one-liner "fresh git repo per attempt -> opencode run -> hidden tests -> verify".
+- STRICTLY NO "Failure details" section, no verify_log or agent_error anywhere.
+- Escape all strings inserted into HTML. Responsive to mobile. No frameworks besides Chart.js CDN.
+- Verify your JS logic carefully against the data.json in this directory (it is real sample data).

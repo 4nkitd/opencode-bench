@@ -1,5 +1,10 @@
 {
-  "prompt": "Tests in this repo fail: run go test ./... and you'll see coupon sync stops working after the first API error. Find the bug(s) in sync.go and fix them so all tests pass. You must NOT modify sync_test.go or api.go — fix the logic in sync.go only. Behavior spec: SyncPending pushes every pending coupon to the API; a coupon that fails stays pending and is retried on the next SyncPending call; a success marks it synced; concurrent SyncPending calls must not run simultaneously (second call returns ErrSyncInFlight) but a finished or failed sync must always release the lock.",
+  "prompt": "Tests in this repo fail: run go test ./... and you'll see coupon sync stops working after the first API error. Find the bug(s) in sync.go and fix them so all tests pass. You must NOT modify sync_test.go or api.go \u2014 fix the logic in sync.go only. Behavior spec: SyncPending pushes every pending coupon to the API; a coupon that fails stays pending and is retried on the next SyncPending call; a success marks it synced; concurrent SyncPending calls must not run simultaneously (second call returns ErrSyncInFlight) but a finished or failed sync must always release the lock.",
   "verify_cmd": "go test ./...",
-  "timeout_min": 12
+  "timeout_min": 12,
+  "title": "Stuck Sync-Lock Debugging",
+  "lang": "Go",
+  "difficulty": "Hard",
+  "goal": "Debug a coupon syncer where one API failure permanently wedges the in-flight lock and aborts the whole batch. Fix sync.go only; tests are read-only.",
+  "signal": "Root-cause debugging, not feature writing: two interacting bugs (early return skips lock release, one bad coupon halts the batch) mirror a real cart gift-sync incident. Hidden concurrency tests catch superficial fixes."
 }
