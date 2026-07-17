@@ -47,6 +47,7 @@ section{margin-top:72px}
 .who{flex:1 1 auto;min-width:0;display:flex;align-items:baseline;gap:8px;overflow:hidden}
 .name{font-family:var(--mono);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .prov{font-family:var(--mono);font-size:12.5px;color:var(--fg-muted);white-space:nowrap;flex:none}
+.variant{font-family:var(--mono);font-size:12.5px;color:var(--amber,#c9a94e);white-space:nowrap;flex:none}
 .barcol{flex:0 0 180px}
 .track{display:block;position:relative;height:20px;background:rgba(35,35,35,.25)}
 .fill{position:absolute;top:0;bottom:0;left:0}
@@ -226,21 +227,22 @@ function render(D) {
 
   const models = new Map();
   const cells = new Map();
-  const ckey = (m, s) => m + ' ' + s;
+  const mkey = r => r.model + (r.variant ? '@' + r.variant : '');
+  const ckey = (m, s) => m + ' ' + s;
   let totalCost = 0;
   for (const r of runs) {
-    let m = models.get(r.model);
+    let m = models.get(mkey(r));
     if (!m) {
-      m = {model: r.model, fam: familyOf(r.model), pass: 0, total: 0, cost: 0, time: 0};
-      models.set(r.model, m);
+      m = {model: r.model, key: mkey(r), variant: r.variant || '', fam: familyOf(r.model), pass: 0, total: 0, cost: 0, time: 0};
+      models.set(mkey(r), m);
     }
     m.total++;
     if (r.passed) m.pass++;
     m.cost += r.cost_usd || 0;
     m.time += r.duration_s || 0;
     totalCost += r.cost_usd || 0;
-    let c = cells.get(ckey(r.model, r.scenario));
-    if (!c) { c = {pass: 0, total: 0}; cells.set(ckey(r.model, r.scenario), c); }
+    let c = cells.get(ckey(mkey(r), r.scenario));
+    if (!c) { c = {pass: 0, total: 0}; cells.set(ckey(mkey(r), r.scenario), c); }
     c.total++;
     if (r.passed) c.pass++;
   }
@@ -277,7 +279,8 @@ function render(D) {
     return '<div class="lb-row">' +
       '<span class="rank">' + (i + 1) + '</span>' +
       '<span class="who"><span class="name">' + esc(m.model) + '</span>' +
-      '<span class="prov">[' + esc(m.fam.label) + ']</span></span>' +
+      '<span class="prov">[' + esc(m.fam.label) + ']</span>' +
+      '<span class="variant">[' + esc(m.variant || 'default') + ']</span></span>' +
       '<span class="barcol"><span class="track">' +
       '<span class="fill" style="width:' + pct.toFixed(1) + '%;background:' + m.fam.color + '"></span>' +
       '</span></span>' +
@@ -301,7 +304,7 @@ function render(D) {
   document.getElementById('tasks').innerHTML = scenarios.map(s => {
     let solved = 0, withRuns = 0;
     for (const m of stats) {
-      const c = cells.get(ckey(m.model, s.name));
+      const c = cells.get(ckey(m.key, s.name));
       if (c && c.total > 0) {
         withRuns++;
         if (c.pass === c.total) solved++;
@@ -325,9 +328,9 @@ function render(D) {
     '<div class="mxc mxh c" title="' + esc(s) + '"><span class="mh">' + esc(s) + '</span></div>').join('');
   stats.forEach((m, ri) => {
     const last = ri === stats.length - 1 ? ' last' : '';
-    mx += '<div class="mxc' + last + '"><span class="mn" title="' + esc(m.model) + '">' + esc(short(m.model)) + '</span></div>';
+    mx += '<div class="mxc' + last + '"><span class="mn" title="' + esc(m.key) + '">' + esc(short(m.model) + (m.variant ? '@' + m.variant : '')) + '</span></div>';
     for (const s of scenNames) {
-      const c = cells.get(ckey(m.model, s));
+      const c = cells.get(ckey(m.key, s));
       if (!c) {
         mx += '<div class="mxc c na' + last + '">&mdash;</div>';
       } else {
@@ -358,7 +361,7 @@ function render(D) {
   new Chart(document.getElementById('passChart'), {
     type: 'bar',
     data: {
-      labels: stats.map(m => short(m.model)),
+      labels: stats.map(m => short(m.model) + (m.variant ? '@' + m.variant : '')),
       datasets: [{
         data: stats.map(m => +rate(m).toFixed(1)),
         backgroundColor: stats.map(m => m.fam.color),
@@ -386,7 +389,7 @@ function render(D) {
     type: 'scatter',
     data: {
       datasets: [{
-        data: stats.map(m => ({x: +m.cost.toFixed(2), y: +rate(m).toFixed(1)})),
+        data: stats.map(m => ({x: +m.cost.toFixed(2), y: +rate(m).toFixed(1), label: short(m.model) + (m.variant ? '@' + m.variant : '')})),
         backgroundColor: stats.map(m => m.fam.color),
         pointStyle: 'rect', pointRadius: 5, pointHoverRadius: 7, pointBorderWidth: 0,
       }],

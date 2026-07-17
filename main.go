@@ -31,6 +31,7 @@ type Scenario struct {
 type Result struct {
 	Scenario   string  `json:"scenario"`
 	Model      string  `json:"model"`
+	Variant    string  `json:"variant,omitempty"`
 	Attempt    int     `json:"attempt"`
 	Passed     bool    `json:"passed"`
 	DurationS  float64 `json:"duration_s"`
@@ -175,7 +176,11 @@ func loadScenarios(dir, only string) ([]Scenario, error) {
 }
 
 func runOne(root string, sc Scenario, model string, keep bool) Result {
-	r := Result{Scenario: sc.Name, Model: model}
+	variant := ""
+	if i := strings.Index(model, "@"); i >= 0 {
+		model, variant = model[:i], model[i+1:]
+	}
+	r := Result{Scenario: sc.Name, Model: model, Variant: variant}
 	scDir := filepath.Join(root, "scenarios", sc.Name)
 
 	work, err := os.MkdirTemp("", "ocbench-"+sc.Name+"-")
@@ -197,7 +202,11 @@ func runOne(root string, sc Scenario, model string, keep bool) Result {
 	gitRun(work, "commit", "-qm", "seed", "--no-gpg-sign")
 
 	start := time.Now()
-	cmd := exec.Command("opencode", "run", "-m", model, "--dir", work, "--auto", "--title", "bench:"+sc.Name, sc.Prompt)
+	args := []string{"run", "-m", model, "--dir", work, "--auto", "--title", "bench:" + sc.Name}
+	if variant != "" {
+		args = append(args, "--variant", variant)
+	}
+	cmd := exec.Command("opencode", append(args, sc.Prompt)...)
 	cmd.Dir = work
 	cmd.Env = append(os.Environ(), "OPENCODE_DISABLE_LSP_DOWNLOAD=true")
 	done := make(chan error, 1)
