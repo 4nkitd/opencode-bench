@@ -201,6 +201,9 @@ const LANG = {
 };
 const langDot = l => (LANG[String(l||'').toLowerCase()] || {color:'#8a8a8a'}).color;
 
+const DEFAULT_VARIANT = {anthropic: 'high'};
+const variantLabel = m => m.variant || DEFAULT_VARIANT[m.fam.key] || 'std';
+
 const fmtDur = s => {
   s = Math.round(s);
   return s < 60 ? s + 's' : Math.floor(s/60) + 'm ' + String(s%60).padStart(2,'0') + 's';
@@ -280,7 +283,7 @@ function render(D) {
       '<span class="rank">' + (i + 1) + '</span>' +
       '<span class="who"><span class="name">' + esc(m.model) + '</span>' +
       '<span class="prov">[' + esc(m.fam.label) + ']</span>' +
-      '<span class="variant">[' + esc(m.variant || 'default') + ']</span></span>' +
+      '<span class="variant" title="' + (m.variant ? 'explicit variant' : 'provider default effort') + '">[' + esc(variantLabel(m)) + ']</span></span>' +
       '<span class="barcol"><span class="track">' +
       '<span class="fill" style="width:' + pct.toFixed(1) + '%;background:' + m.fam.color + '"></span>' +
       '</span></span>' +
