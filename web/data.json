@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-17T18:36:38+05:30",
+  "generated_at": "2026-07-25T00:14:59+05:30",
   "scenarios": [
     {
       "name": "go-coupon-sync-bug",
@@ -2003,6 +2003,138 @@
       "tokens_in": 0,
       "tokens_out": 0,
       "work_dir": ""
+    },
+    {
+      "scenario": "go-coupon-sync-bug",
+      "model": "anthropic/claude-opus-5",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 65.084698,
+      "cost_usd": 0.21048799999999998,
+      "tokens_in": 107207,
+      "tokens_out": 1739,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-4243170969"
+    },
+    {
+      "scenario": "go-currency-market",
+      "model": "anthropic/claude-opus-5",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 87.86551875,
+      "cost_usd": 0.2200165,
+      "tokens_in": 150852,
+      "tokens_out": 3403,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-4260485968"
+    },
+    {
+      "scenario": "go-graphql-optional-field",
+      "model": "anthropic/claude-opus-5",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 76.285518583,
+      "cost_usd": 0.35609650000000004,
+      "tokens_in": 183904,
+      "tokens_out": 5020,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-4115788838"
+    },
+    {
+      "scenario": "go-portlist",
+      "model": "anthropic/claude-opus-5",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 140.958426792,
+      "cost_usd": 0.38360025,
+      "tokens_in": 244104,
+      "tokens_out": 5028,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-1814168124"
+    },
+    {
+      "scenario": "go-webhook-retry",
+      "model": "anthropic/claude-opus-5",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 75.232837417,
+      "cost_usd": 0.36647250000000003,
+      "tokens_in": 204871,
+      "tokens_out": 4841,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-4137434480"
+    },
+    {
+      "scenario": "js-cart-progress",
+      "model": "anthropic/claude-opus-5",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 48.611781125,
+      "cost_usd": 0.25105925,
+      "tokens_in": 131191,
+      "tokens_out": 2641,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-2566791224"
+    },
+    {
+      "scenario": "go-coupon-sync-bug",
+      "model": "opencode-go/hy3",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 49.085503125,
+      "cost_usd": 0.010491095,
+      "tokens_in": 109863,
+      "tokens_out": 953,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-3165317126"
+    },
+    {
+      "scenario": "go-currency-market",
+      "model": "opencode-go/hy3",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 35.308486125,
+      "cost_usd": 0.00340698,
+      "tokens_in": 47897,
+      "tokens_out": 662,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-4047128465"
+    },
+    {
+      "scenario": "go-graphql-optional-field",
+      "model": "opencode-go/hy3",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 63.775228625,
+      "cost_usd": 0.006251180000000001,
+      "tokens_in": 104309,
+      "tokens_out": 1612,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-2126017479"
+    },
+    {
+      "scenario": "go-portlist",
+      "model": "opencode-go/hy3",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 446.508116083,
+      "cost_usd": 0.028563259999999997,
+      "tokens_in": 166986,
+      "tokens_out": 33329,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-690502559"
+    },
+    {
+      "scenario": "go-webhook-retry",
+      "model": "opencode-go/hy3",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 38.389909834,
+      "cost_usd": 0.01027286,
+      "tokens_in": 70229,
+      "tokens_out": 760,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-2117535585"
+    },
+    {
+      "scenario": "js-cart-progress",
+      "model": "opencode-go/hy3",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 35.333189417,
+      "cost_usd": 0.0034259,
+      "tokens_in": 48519,
+      "tokens_out": 614,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-1240614489"
     }
   ]
 }
