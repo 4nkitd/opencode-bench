@@ -59,6 +59,7 @@ section{margin-top:72px}
 .col.solve{width:70px}
 .col.time{width:64px}
 .lb-head .col{color:var(--fg-dim)}
+.col.best{color:var(--green);font-weight:600}
 .lb-axis{padding-top:6px}
 .axis{position:relative;height:14px;display:block}
 .axis span{position:absolute;top:0;transform:translateX(-50%);font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:11px;color:var(--fg-dim)}
@@ -277,6 +278,17 @@ function render(D) {
     '<div class="lb-head"><span class="rank">#</span><span class="who">model</span>' +
     '<span class="barcol"></span>' + colHeads + '</div>';
 
+  const perSolve = m => m.pass ? m.cost / m.pass : Infinity;
+  const avgTime = m => m.total ? m.time / m.total : Infinity;
+  const bestOf = fn => stats.length ? Math.min(...stats.map(fn)) : Infinity;
+  const best = {
+    pct: Math.max(...stats.map(rate), 0),
+    cost: bestOf(m => m.cost),
+    solve: bestOf(perSolve),
+    time: bestOf(avgTime),
+  };
+  const bc = (metric, v) => 'col ' + metric + (v === best[metric] ? ' best' : '');
+
   board += stats.map((m, i) => {
     const pct = rate(m);
     return '<div class="lb-row">' +
@@ -288,11 +300,11 @@ function render(D) {
       '<span class="fill" style="width:' + pct.toFixed(1) + '%;background:' + m.fam.color + '"></span>' +
       '</span></span>' +
       '<span class="cols">' +
-      '<span class="col pct">' + pct.toFixed(1) + '</span>' +
+      '<span class="' + bc('pct', pct) + '">' + pct.toFixed(1) + '</span>' +
       '<span class="col kn">' + m.pass + '/' + m.total + '</span>' +
-      '<span class="col cost">$' + m.cost.toFixed(2) + '</span>' +
-      '<span class="col solve">' + (m.pass ? '$' + (m.cost / m.pass).toFixed(3) : '&mdash;') + '</span>' +
-      '<span class="col time">' + fmtDur(m.time / m.total) + '</span>' +
+      '<span class="' + bc('cost', m.cost) + '">$' + m.cost.toFixed(2) + '</span>' +
+      '<span class="' + bc('solve', perSolve(m)) + '">' + (m.pass ? '$' + perSolve(m).toFixed(3) : '&mdash;') + '</span>' +
+      '<span class="' + bc('time', avgTime(m)) + '">' + fmtDur(avgTime(m)) + '</span>' +
       '</span></div>';
   }).join('');
 
