@@ -60,6 +60,11 @@ section{margin-top:72px}
 .col.time{width:64px}
 .lb-head .col{color:var(--fg-dim)}
 .col.best{color:var(--green);font-weight:600}
+.lb-head .sortable{cursor:pointer;user-select:none;letter-spacing:.06em;transition:color .12s}
+.lb-head .sortable:hover{color:var(--fg)}
+.lb-head .sortable:focus-visible{outline:1px solid var(--fg-dim);outline-offset:2px}
+.lb-head .sortable.sorted{color:var(--fg)}
+.lb-head .arrow{display:inline-block;width:9px;margin-left:2px;text-align:left}
 .lb-axis{padding-top:6px}
 .axis{position:relative;height:14px;display:block}
 .axis span{position:absolute;top:0;transform:translateX(-50%);font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:11px;color:var(--fg-dim)}
@@ -265,19 +270,6 @@ function render(D) {
     '<div class="hstat"><b>' + esc(v) + '</b><span>' + esc(l) + '</span></div>'
   ).join('');
 
-  const colHeads =
-    '<span class="cols">' +
-    '<span class="col pct">pass@3</span>' +
-    '<span class="col kn">passes</span>' +
-    '<span class="col cost">cost</span>' +
-    '<span class="col solve">$/solve</span>' +
-    '<span class="col time">avg time</span>' +
-    '</span>';
-
-  let board =
-    '<div class="lb-head"><span class="rank">#</span><span class="who">model</span>' +
-    '<span class="barcol"></span>' + colHeads + '</div>';
-
   const perSolve = m => m.pass ? m.cost / m.pass : Infinity;
   const avgTime = m => m.total ? m.time / m.total : Infinity;
   const bestOf = fn => stats.length ? Math.min(...stats.map(fn)) : Infinity;
@@ -289,32 +281,90 @@ function render(D) {
   };
   const bc = (metric, v) => 'col ' + metric + (v === best[metric] ? ' best' : '');
 
-  board += stats.map((m, i) => {
-    const pct = rate(m);
-    return '<div class="lb-row">' +
-      '<span class="rank">' + (i + 1) + '</span>' +
-      '<span class="who"><span class="name">' + esc(m.model) + '</span>' +
-      '<span class="prov">[' + esc(m.fam.label) + ']</span>' +
-      '<span class="variant" title="' + (m.variant ? 'explicit variant' : 'provider default effort') + '">[' + esc(variantLabel(m)) + ']</span></span>' +
-      '<span class="barcol"><span class="track">' +
-      '<span class="fill" style="width:' + pct.toFixed(1) + '%;background:' + m.fam.color + '"></span>' +
-      '</span></span>' +
-      '<span class="cols">' +
-      '<span class="' + bc('pct', pct) + '">' + pct.toFixed(1) + '</span>' +
-      '<span class="col kn">' + m.pass + '/' + m.total + '</span>' +
-      '<span class="' + bc('cost', m.cost) + '">$' + m.cost.toFixed(2) + '</span>' +
-      '<span class="' + bc('solve', perSolve(m)) + '">' + (m.pass ? '$' + perSolve(m).toFixed(3) : '&mdash;') + '</span>' +
-      '<span class="' + bc('time', avgTime(m)) + '">' + fmtDur(avgTime(m)) + '</span>' +
-      '</span></div>';
-  }).join('');
+  // -1 = bigger is better (default desc), 1 = smaller is better (default asc)
+  const COLS = [
+    {key: 'pct',   label: 'pass@3',   val: rate,             dir: -1},
+    {key: 'kn',    label: 'passes',   val: m => m.pass,      dir: -1},
+    {key: 'cost',  label: 'cost',     val: m => m.cost,      dir:  1},
+    {key: 'solve', label: '$/solve',  val: perSolve,         dir:  1},
+    {key: 'time',  label: 'avg time', val: avgTime,          dir:  1},
+  ];
+  let sortKey = 'pct', sortDir = -1;
 
-  board +=
-    '<div class="lb-axis"><span class="rank"></span><span class="who"></span>' +
-    '<span class="barcol"><span class="axis">' +
-    '<span style="left:0">0</span><span class="axq" style="left:25%">25</span><span style="left:50%">50</span>' +
-    '<span class="axq" style="left:75%">75</span><span style="left:100%">100</span>' +
-    '</span></span><span class="cols"></span></div>';
-  document.getElementById('board').innerHTML = board;
+  function sorted() {
+    const c = COLS.find(c => c.key === sortKey);
+    return [...stats].sort((a, b) => {
+      const d = (c.val(a) - c.val(b)) * sortDir;
+      if (d) return d;
+      // stable, meaningful tiebreaks so equal rows don't jitter
+      return rate(b) - rate(a) || a.cost - b.cost || a.time - b.time ||
+        a.model.localeCompare(b.model);
+    });
+  }
+
+  function drawBoard() {
+    const heads = COLS.map(c => {
+      const on = c.key === sortKey;
+      const arrow = on ? (sortDir === -1 ? '\u2193' : '\u2191') : '';
+      return '<span class="col ' + c.key + ' sortable' + (on ? ' sorted' : '') +
+        '" data-sort="' + c.key + '" role="button" tabindex="0" title="sort by ' +
+        esc(c.label) + '">' + esc(c.label) +
+        '<span class="arrow">' + arrow + '</span></span>';
+    }).join('');
+
+    let board =
+      '<div class="lb-head"><span class="rank">#</span><span class="who">model</span>' +
+      '<span class="barcol"></span><span class="cols">' + heads + '</span></div>';
+
+    board += sorted().map((m, i) => {
+      const pct = rate(m);
+      return '<div class="lb-row">' +
+        '<span class="rank">' + (i + 1) + '</span>' +
+        '<span class="who"><span class="name">' + esc(m.model) + '</span>' +
+        '<span class="prov">[' + esc(m.fam.label) + ']</span>' +
+        '<span class="variant" title="' + (m.variant ? 'explicit variant' : 'provider default effort') + '">[' + esc(variantLabel(m)) + ']</span></span>' +
+        '<span class="barcol"><span class="track">' +
+        '<span class="fill" style="width:' + pct.toFixed(1) + '%;background:' + m.fam.color + '"></span>' +
+        '</span></span>' +
+        '<span class="cols">' +
+        '<span class="' + bc('pct', pct) + '">' + pct.toFixed(1) + '</span>' +
+        '<span class="col kn">' + m.pass + '/' + m.total + '</span>' +
+        '<span class="' + bc('cost', m.cost) + '">$' + m.cost.toFixed(2) + '</span>' +
+        '<span class="' + bc('solve', perSolve(m)) + '">' + (m.pass ? '$' + perSolve(m).toFixed(3) : '&mdash;') + '</span>' +
+        '<span class="' + bc('time', avgTime(m)) + '">' + fmtDur(avgTime(m)) + '</span>' +
+        '</span></div>';
+    }).join('');
+
+    board +=
+      '<div class="lb-axis"><span class="rank"></span><span class="who"></span>' +
+      '<span class="barcol"><span class="axis">' +
+      '<span style="left:0">0</span><span class="axq" style="left:25%">25</span><span style="left:50%">50</span>' +
+      '<span class="axq" style="left:75%">75</span><span style="left:100%">100</span>' +
+      '</span></span><span class="cols"></span></div>';
+    document.getElementById('board').innerHTML = board;
+  }
+
+  function onSort(key) {
+    const c = COLS.find(c => c.key === key);
+    if (!c) return;
+    // same column flips direction, new column starts at its natural best-first
+    sortDir = key === sortKey ? -sortDir : c.dir;
+    sortKey = key;
+    drawBoard();
+  }
+
+  const boardEl = document.getElementById('board');
+  boardEl.addEventListener('click', e => {
+    const h = e.target.closest('.sortable');
+    if (h) onSort(h.dataset.sort);
+  });
+  boardEl.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const h = e.target.closest('.sortable');
+    if (h) { e.preventDefault(); onSort(h.dataset.sort); }
+  });
+
+  drawBoard();
 
   document.getElementById('tasks').innerHTML = scenarios.map(s => {
     let solved = 0, withRuns = 0;
