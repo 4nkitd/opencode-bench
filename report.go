@@ -22,21 +22,29 @@ type Data struct {
 	Runs        []Result       `json:"runs"`
 }
 
-// dead entries: local LoRA experiments and opencode-zen routes that never got a
-// working tool-call loop. All scored 0% and just pad the board. Note these are
-// exact IDs — the opencode-go/* equivalents are real results and stay.
+// Board entries to drop, keyed "model@variant" on the RAW variant field.
+// Careful: anthropic runs with no explicit variant are stored as "" and only
+// *displayed* as [high] (the UI fills in anthropic's default). So the @high
+// rows are keyed "model@" here, while the @low rows are separate and stay.
 var excludedModels = map[string]bool{
-	"gemma4-lora/my-lora":     true,
-	"emma4-lora/my-lora":      true,
-	"opencode/kimi-k2.7-code": true,
-	"opencode/minimax-m3":     true,
-	"opencode/glm-5.2":        true,
+	// dead 0% entries: local LoRA experiments + zen routes with no working tool loop
+	"gemma4-lora/my-lora@":     true,
+	"emma4-lora/my-lora@":      true,
+	"opencode/kimi-k2.7-code@": true,
+	"opencode/minimax-m3@":     true,
+	"opencode/glm-5.2@":        true,
+	"ankit-gemma4-finetuned@":  true,
+	// anthropic default-effort (displayed [high]) runs
+	"anthropic/claude-opus-5@":   true,
+	"anthropic/claude-sonnet-5@": true,
+	"anthropic/claude-opus-4-8@": true,
+	"anthropic/claude-fable-5@":  true,
 }
 
 func writeDataJSON(results []Result) string {
 	kept := results[:0:0]
 	for _, r := range results {
-		if !excludedModels[r.Model] {
+		if !excludedModels[r.Model+"@"+r.Variant] {
 			kept = append(kept, r)
 		}
 	}
