@@ -22,7 +22,26 @@ type Data struct {
 	Runs        []Result       `json:"runs"`
 }
 
+// dead entries: local LoRA experiments and opencode-zen routes that never got a
+// working tool-call loop. All scored 0% and just pad the board. Note these are
+// exact IDs — the opencode-go/* equivalents are real results and stay.
+var excludedModels = map[string]bool{
+	"gemma4-lora/my-lora":     true,
+	"emma4-lora/my-lora":      true,
+	"opencode/kimi-k2.7-code": true,
+	"opencode/minimax-m3":     true,
+	"opencode/glm-5.2":        true,
+}
+
 func writeDataJSON(results []Result) string {
+	kept := results[:0:0]
+	for _, r := range results {
+		if !excludedModels[r.Model] {
+			kept = append(kept, r)
+		}
+	}
+	results = kept
+
 	var metas []ScenarioMeta
 	entries, _ := os.ReadDir("scenarios")
 	for _, e := range entries {
