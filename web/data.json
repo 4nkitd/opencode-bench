@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-31T17:11:29+05:30",
+  "generated_at": "2026-08-01T22:23:28+05:30",
   "scenarios": [
     {
       "name": "go-coupon-sync-bug",
@@ -2526,6 +2526,73 @@
       "tokens_in": 279263,
       "tokens_out": 3269,
       "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-2603906253"
+    },
+    {
+      "scenario": "go-coupon-sync-bug",
+      "model": "opencode-go/deepseek-v4-flash",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 58.263371625,
+      "cost_usd": 0.0067928727999999996,
+      "tokens_in": 241623,
+      "tokens_out": 1731,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-865661979"
+    },
+    {
+      "scenario": "go-currency-market",
+      "model": "opencode-go/deepseek-v4-flash",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 54.238296083,
+      "cost_usd": 0.0063746872000000005,
+      "tokens_in": 196969,
+      "tokens_out": 1616,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-1200731034"
+    },
+    {
+      "scenario": "go-graphql-optional-field",
+      "model": "opencode-go/deepseek-v4-flash",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 61.467283167,
+      "cost_usd": 0.006982947999999999,
+      "tokens_in": 321387,
+      "tokens_out": 1916,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-1156792910"
+    },
+    {
+      "scenario": "go-portlist",
+      "model": "opencode-go/deepseek-v4-flash",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 85.432560125,
+      "cost_usd": 0.007803028800000001,
+      "tokens_in": 286604,
+      "tokens_out": 4173,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-436206621"
+    },
+    {
+      "scenario": "go-webhook-retry",
+      "model": "opencode-go/deepseek-v4-flash",
+      "attempt": 1,
+      "passed": false,
+      "duration_s": 71.444027417,
+      "cost_usd": 0.0072752343999999995,
+      "tokens_in": 403933,
+      "tokens_out": 2204,
+      "verify_log": "# webhooksvc [webhooksvc.test]\n./handler_bench_test.go:21:20: undefined: computeHMAC\n./handler_bench_test.go:37:20: undefined: computeHMAC\nFAIL\twebhooksvc [build failed]\nFAIL\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-3436745945"
+    },
+    {
+      "scenario": "js-cart-progress",
+      "model": "opencode-go/deepseek-v4-flash",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 57.469361292,
+      "cost_usd": 0.0064932895999999995,
+      "tokens_in": 236946,
+      "tokens_out": 1557,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-1119592031"
     }
   ]
 }
