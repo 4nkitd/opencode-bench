@@ -38,6 +38,7 @@ type Result struct {
 	CostUSD    float64 `json:"cost_usd"`
 	TokensIn   int64   `json:"tokens_in"`
 	TokensOut  int64   `json:"tokens_out"`
+	Steps      int64   `json:"steps"`
 	VerifyLog  string  `json:"verify_log,omitempty"`
 	AgentError string  `json:"agent_error,omitempty"`
 	WorkDir    string  `json:"work_dir"`
@@ -257,9 +258,14 @@ func fillUsage(r *Result, dir string) {
 	if err != nil {
 		resolved = dir
 	}
-	row := db.QueryRow(`select cost, tokens_input+tokens_cache_read+tokens_cache_write, tokens_output+tokens_reasoning
+	var sessionID string
+	row := db.QueryRow(`select id, cost, tokens_input+tokens_cache_read+tokens_cache_write, tokens_output+tokens_reasoning
 		from session where directory in (?, ?) order by time_created desc limit 1`, dir, resolved)
-	_ = row.Scan(&r.CostUSD, &r.TokensIn, &r.TokensOut)
+	if row.Scan(&sessionID, &r.CostUSD, &r.TokensIn, &r.TokensOut) != nil {
+		return
+	}
+	srow := db.QueryRow(`select count(*) from part where session_id = ? and json_extract(data, '$.type') = 'tool'`, sessionID)
+	_ = srow.Scan(&r.Steps)
 }
 
 func copyTree(src, dst string) error {
@@ -293,14 +299,14 @@ func gitRun(dir string, args ...string) {
 }
 
 func printTable(results []Result) {
-	fmt.Printf("%-28s %-34s %-6s %8s %10s\n", "SCENARIO", "MODEL", "PASS", "TIME(s)", "COST($)")
+	fmt.Printf("%-28s %-34s %-6s %8s %10s %9s %9s %6s\n", "SCENARIO", "MODEL", "PASS", "TIME(s)", "COST($)", "TOK_IN", "TOK_OUT", "STEPS")
 	byModel := map[string][2]int{}
 	for _, r := range results {
 		p := "no"
 		if r.Passed {
 			p = "yes"
 		}
-		fmt.Printf("%-28s %-34s %-6s %8.0f %10.4f\n", r.Scenario, r.Model, p, r.DurationS, r.CostUSD)
+		fmt.Printf("%-28s %-34s %-6s %8.0f %10.4f %9d %9d %6d\n", r.Scenario, r.Model, p, r.DurationS, r.CostUSD, r.TokensIn, r.TokensOut, r.Steps)
 		s := byModel[r.Model]
 		s[1]++
 		if r.Passed {

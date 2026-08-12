@@ -58,6 +58,8 @@ section{margin-top:72px}
 .col.cost{width:60px}
 .col.solve{width:70px}
 .col.time{width:64px}
+.col.tok{width:92px}
+.col.steps{width:52px}
 .lb-head .col{color:var(--fg-dim)}
 .col.best{color:var(--green);font-weight:600}
 .lb-head .sortable{cursor:pointer;user-select:none;letter-spacing:.06em;transition:color .12s}
@@ -242,13 +244,16 @@ function render(D) {
   for (const r of runs) {
     let m = models.get(mkey(r));
     if (!m) {
-      m = {model: r.model, key: mkey(r), variant: r.variant || '', fam: familyOf(r.model), pass: 0, total: 0, cost: 0, time: 0};
+      m = {model: r.model, key: mkey(r), variant: r.variant || '', fam: familyOf(r.model), pass: 0, total: 0, cost: 0, time: 0, tin: 0, tout: 0, steps: 0, stepRuns: 0};
       models.set(mkey(r), m);
     }
     m.total++;
     if (r.passed) m.pass++;
     m.cost += r.cost_usd || 0;
     m.time += r.duration_s || 0;
+    m.tin += r.tokens_in || 0;
+    m.tout += r.tokens_out || 0;
+    if (r.steps != null) { m.steps += r.steps; m.stepRuns++; }
     totalCost += r.cost_usd || 0;
     let c = cells.get(ckey(mkey(r), r.scenario));
     if (!c) { c = {pass: 0, total: 0}; cells.set(ckey(mkey(r), r.scenario), c); }
@@ -272,6 +277,8 @@ function render(D) {
 
   const perSolve = m => m.pass ? m.cost / m.pass : Infinity;
   const avgTime = m => m.total ? m.time / m.total : Infinity;
+  const avgSteps = m => m.stepRuns ? m.steps / m.stepRuns : Infinity;
+  const fmtTok = n => n >= 1e6 ? (n/1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n/1e3) + 'k' : String(n);
   const bestOf = fn => stats.length ? Math.min(...stats.map(fn)) : Infinity;
   const best = {
     pct: Math.max(...stats.map(rate), 0),
@@ -287,6 +294,8 @@ function render(D) {
     {key: 'kn',    label: 'passes',   val: m => m.pass,      dir: -1},
     {key: 'cost',  label: 'cost',     val: m => m.cost,      dir:  1},
     {key: 'solve', label: '$/solve',  val: perSolve,         dir:  1},
+    {key: 'tok',   label: 'tok in/out', val: m => m.tin + m.tout, dir: 1},
+    {key: 'steps', label: 'steps',    val: avgSteps,         dir:  1},
     {key: 'time',  label: 'avg time', val: avgTime,          dir:  1},
   ];
   let sortKey = 'pct', sortDir = -1;
@@ -331,6 +340,8 @@ function render(D) {
         '<span class="col kn">' + m.pass + '/' + m.total + '</span>' +
         '<span class="' + bc('cost', m.cost) + '">$' + m.cost.toFixed(2) + '</span>' +
         '<span class="' + bc('solve', perSolve(m)) + '">' + (m.pass ? '$' + perSolve(m).toFixed(3) : '&mdash;') + '</span>' +
+        '<span class="col tok" title="total input / output tokens">' + fmtTok(m.tin) + '/' + fmtTok(m.tout) + '</span>' +
+        '<span class="col steps" title="avg tool calls per attempt">' + (m.stepRuns ? avgSteps(m).toFixed(1) : '&mdash;') + '</span>' +
         '<span class="' + bc('time', avgTime(m)) + '">' + fmtDur(avgTime(m)) + '</span>' +
         '</span></div>';
     }).join('');
