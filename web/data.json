@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-01T22:23:28+05:30",
+  "generated_at": "2026-08-12T22:27:59+05:30",
   "scenarios": [
     {
       "name": "go-coupon-sync-bug",
@@ -11,7 +11,7 @@
     },
     {
       "name": "go-currency-market",
-      "title": "Currency \u0026 Market Mapping",
+      "title": "Currency & Market Mapping",
       "lang": "Go",
       "difficulty": "Medium",
       "goal": "Implement ISO 4217 minor-unit money formatting (0/2/3 decimal currencies, negatives) and currency-to-country market mapping from a written spec.",
@@ -23,7 +23,7 @@
       "lang": "Go",
       "difficulty": "Hard",
       "goal": "Query an optional GraphQL field for market support, but degrade gracefully when the API version rejects it: retry once without the field, propagate every other error.",
-      "signal": "Recreates a real 3-day production outage: an agent added presentmentCurrencies to a discount query, older API versions rejected the whole query, and the handler swallowed the failure. Tests schema-evolution defensiveness — distinguishing 'field not supported' from real errors and never silently succeeding."
+      "signal": "Recreates a real 3-day production outage: an agent added presentmentCurrencies to a discount query, older API versions rejected the whole query, and the handler swallowed the failure. Tests schema-evolution defensiveness \u2014 distinguishing 'field not supported' from real errors and never silently succeeding."
     },
     {
       "name": "go-portlist",
@@ -39,7 +39,7 @@
       "lang": "Go",
       "difficulty": "Hard",
       "goal": "Fix a Shopify-style webhook handler that returns HTTP 200 even when processing fails, and rejects nothing on HMAC mismatch.",
-      "signal": "Distilled from a real production incident where broken discount syncs went silent for 3 days. Tests whether a model understands delivery/retry contracts and auth-before-processing — not just making code compile. The most discriminating task in the suite."
+      "signal": "Distilled from a real production incident where broken discount syncs went silent for 3 days. Tests whether a model understands delivery/retry contracts and auth-before-processing \u2014 not just making code compile. The most discriminating task in the suite."
     },
     {
       "name": "js-cart-progress",
@@ -1214,7 +1214,7 @@
       "cost_usd": 0.03137743,
       "tokens_in": 82317,
       "tokens_out": 2097,
-      "verify_log": "'$1,000,000.00'\n     ^\n\n    at Object.\u003canonymous\u003e (/private/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-3318979621/bench_test.js:21:8)\n    at Module._compile (node:internal/modules/cjs/loader:1873:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:2013:10)\n    at Module.load (node:internal/modules/cjs/loader:1596:32)\n    at Module._load (node:internal/modules/cjs/loader:1398:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47 {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: '$10,00,000.00',\n  expected: '$1,000,000.00',\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v26.3.0\n",
+      "verify_log": "'$1,000,000.00'\n     ^\n\n    at Object.<anonymous> (/private/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-3318979621/bench_test.js:21:8)\n    at Module._compile (node:internal/modules/cjs/loader:1873:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:2013:10)\n    at Module.load (node:internal/modules/cjs/loader:1596:32)\n    at Module._load (node:internal/modules/cjs/loader:1398:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47 {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: '$10,00,000.00',\n  expected: '$1,000,000.00',\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v26.3.0\n",
       "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-3318979621"
     },
     {
@@ -2593,6 +2593,72 @@
       "tokens_in": 236946,
       "tokens_out": 1557,
       "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-1119592031"
+    },
+    {
+      "scenario": "go-coupon-sync-bug",
+      "model": "opencode-go/deepseek-v4-pro",
+      "attempt": 4,
+      "passed": true,
+      "duration_s": 71.354111208,
+      "cost_usd": 0.020206736,
+      "tokens_in": 244802,
+      "tokens_out": 1991,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-3441812895"
+    },
+    {
+      "scenario": "go-currency-market",
+      "model": "opencode-go/deepseek-v4-pro",
+      "attempt": 4,
+      "passed": true,
+      "duration_s": 64.815837667,
+      "cost_usd": 0.018541497999999997,
+      "tokens_in": 278048,
+      "tokens_out": 1415,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-973583678"
+    },
+    {
+      "scenario": "go-graphql-optional-field",
+      "model": "opencode-go/deepseek-v4-pro",
+      "attempt": 4,
+      "passed": true,
+      "duration_s": 82.742305791,
+      "cost_usd": 0.020796741,
+      "tokens_in": 242899,
+      "tokens_out": 2986,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-1132568166"
+    },
+    {
+      "scenario": "go-portlist",
+      "model": "opencode-go/deepseek-v4-pro",
+      "attempt": 4,
+      "passed": true,
+      "duration_s": 89.133100792,
+      "cost_usd": 0.020301768999999997,
+      "tokens_in": 281061,
+      "tokens_out": 2503,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-908455110"
+    },
+    {
+      "scenario": "go-webhook-retry",
+      "model": "opencode-go/deepseek-v4-pro",
+      "attempt": 4,
+      "passed": true,
+      "duration_s": 131.85343541700001,
+      "cost_usd": 0.022327882999999996,
+      "tokens_in": 250287,
+      "tokens_out": 5685,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-679358387"
+    },
+    {
+      "scenario": "js-cart-progress",
+      "model": "opencode-go/deepseek-v4-pro",
+      "attempt": 4,
+      "passed": true,
+      "duration_s": 61.793217792,
+      "cost_usd": 0.019014633,
+      "tokens_in": 198539,
+      "tokens_out": 1412,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-2637568566"
     }
   ]
 }
