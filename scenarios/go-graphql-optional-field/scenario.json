@@ -1,7 +1,7 @@
 {
   "prompt": "Implement FetchDiscount in sync.go for a Shopify-style GraphQL client (types in api.go, do not modify api.go). It must query the discount by id requesting title, code and the OPTIONAL field presentmentCurrencies. Some older API versions reject that field: the response has an entry in errors whose message contains \"doesn't exist on type\" (or \"Field 'presentmentCurrencies'\"). In that exact case you must retry ONCE with the same query minus presentmentCurrencies and return the discount with an empty (non-nil) Currencies slice. Any other GraphQL error (e.g. throttled) or transport error must be returned to the caller — never swallowed, never retried. On success return Title, Code and Currencies from the data. Use BuildQuery(id, withCurrencies bool) for query construction so both variants stay consistent. Run go test ./... to check.",
   "verify_cmd": "go test ./...",
-  "timeout_min": 12,
+  "timeout_min": 30,
   "title": "Optional GraphQL Field Fallback",
   "lang": "Go",
   "difficulty": "Hard",

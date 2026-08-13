@@ -1,7 +1,7 @@
 {
   "prompt": "Implement the two exported functions in cart-progress.js for a Shopify cart drawer widget (plain Node-compatible CommonJS, no deps). freeShippingState(subtotalCents, thresholdCents) -> {unlocked, percent, remainingCents}: percent is an integer 0-100 (floor, capped at 100), unlocked when subtotal >= threshold, remainingCents never negative; if thresholdCents <= 0 or not a finite number treat the offer as disabled and return {unlocked:false, percent:0, remainingCents:0, disabled:true}, otherwise disabled:false. formatMoney(cents, symbol) -> string like \"\u20b91,234.50\": thousands separated with commas, always 2 decimals, negative renders as \"-\u20b90.70\", non-finite input renders symbol+\"0.00\". Run: node test.js",
   "verify_cmd": "node bench_test.js",
-  "timeout_min": 10,
+  "timeout_min": 30,
   "title": "Cart Free-Shipping Widget",
   "lang": "JavaScript",
   "difficulty": "Easy",

@@ -1,7 +1,7 @@
 {
   "prompt": "Implement ParseLsof in portlist.go. Input is raw output of `lsof -nP -iTCP -sTCP:LISTEN -F pcn` (field format: lines starting with 'p'=pid, 'c'=command, 'n'=name like '*:3000', '127.0.0.1:8080', '[::1]:5432'). One pid/command block can have many n lines. Return []Listener{PID int, Command string, Port int, Addr string} in input order; Addr is the host part ('*', '127.0.0.1', '::1' \u2014 strip brackets), Port the numeric port. Skip malformed n lines and n lines without a port. Dedupe exact (PID,Addr,Port) repeats. Run go test ./... to check.",
   "verify_cmd": "go test ./...",
-  "timeout_min": 10,
+  "timeout_min": 30,
   "title": "lsof Output Parser",
   "lang": "Go",
   "difficulty": "Medium",

@@ -1,7 +1,7 @@
 {
   "prompt": "Implement the two stubbed functions in money.go for a payments service. FormatMinorUnits(amount int64, currency string) string: render a minor-unit amount as a plain decimal string using ISO 4217 exponents \u2014 2 decimals default, 0 for JPY/KRW/VND, 3 for KWD/BHD/OMR; negative amounts keep a leading minus; e.g. (12345,\"INR\")=\"123.45\", (500,\"JPY\")=\"500\", (12345,\"KWD\")=\"12.345\", (5,\"USD\")=\"0.05\", (-70,\"USD\")=\"-0.70\". Currency codes are case-insensitive. CountriesForCurrency(currency string) []string: return ISO country codes for AED=[AE], SAR=[SA], KWD=[KW], INR=[IN], GBP=[GB], USD=[US], EUR=[DE FR IT ES NL] (that exact order), unknown=empty non-nil slice; case-insensitive. Run go test ./... to check.",
   "verify_cmd": "go test ./...",
-  "timeout_min": 10,
+  "timeout_min": 30,
   "title": "Currency & Market Mapping",
   "lang": "Go",
   "difficulty": "Medium",

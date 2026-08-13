@@ -1,7 +1,7 @@
 {
   "prompt": "This repo has a Shopify-style webhook handler in handler.go. Two bugs: (1) when processing fails it still responds 200 so the platform never retries \u2014 failed processing must respond 500; (2) HMAC verification compares signatures with == on raw strings after decoding only one side \u2014 requests with an invalid signature must be rejected with 401 before any processing. Fix both. Do not change process.go. Run go test ./... to check your work.",
   "verify_cmd": "go test ./...",
-  "timeout_min": 10,
+  "timeout_min": 30,
   "title": "Webhook Retry Semantics",
   "lang": "Go",
   "difficulty": "Hard",
