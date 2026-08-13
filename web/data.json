@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-14T02:07:09+05:30",
+  "generated_at": "2026-08-14T02:33:34+05:30",
   "scenarios": [
     {
       "name": "go-coupon-sync-bug",
@@ -56,15 +56,14 @@
       "model": "google/gemini-3.7-flash",
       "variant": "high",
       "attempt": 1,
-      "passed": false,
-      "duration_s": 300.991449916,
+      "passed": true,
+      "duration_s": 301.210562125,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "verify_log": "--- FAIL: TestLockReleasedAfterError (0.00s)\n    sync_bench_test.go:45: lock stuck after a failed sync\n--- FAIL: TestRetryAfterFailure (0.00s)\n    sync_test.go:30: second sync should retry and succeed, got sync already in flight\n--- FAIL: TestFailedCouponDoesNotBlockOthers (0.00s)\n    sync_test.go:49: a failing coupon must not stop the rest of the batch from syncing\nFAIL\nFAIL\tcouponsync\t0.487s\nFAIL\n",
-      "agent_error": "\u001b[0m\n\u003e friday · gemini-3.7-flash\n\u001b[0m⚙ \u001b[0mexecute {\"code\":\"const result = await tools.memory.recall({ query: \\\"go coupon sync\\\" });\\nreturn result;\\n\"} \n\u003e friday · gemini-3.7-flash\n\u001b[0m✱ \u001b[0mGlob \"**/*\" \u001b[90m4 matches\u001b[0m\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-1625291434"
+      "agent_error": "firstErr error\n \tfor _, c := range s.coupons {\n \t\tif c.Synced {\n \t\t\tcontinue\n \t\t}\n \t\tif err := s.api.PushCoupon(c.Code); err != nil {\n-\t\t\treturn err\n+\t\t\tif firstErr == nil {\n+\t\t\t\tfirstErr = err\n+\t\t\t}\n+\t\t\tcontinue\n \t\t}\n \t\tc.Synced = true\n \t}\n \n-\ts.mu.Lock()\n-\ts.inFlight = false\n-\ts.mu.Unlock()\n-\treturn nil\n+\treturn firstErr\n }\n \n func (s *Syncer) PendingCount() int {\n\u003e friday · gemini-3.7-flash\n\u001b[0m$ \u001b[0mgit status\nOn branch main\nChanges not staged for commit:\n  (use \"git add \u003cfile\u003e...\" to update what will be committed)\n  (use \"git restore \u003cfile\u003e...\" to discard changes in working directory)\n\tmodified:   sync.go\n\nno changes added to commit (use \"git add\" and/or \"git commit -a\")\n\u003e friday · gemini-3.7-flash\n\u001b[0m→ \u001b[0mRead sync.go \n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-3668335954"
     },
     {
       "scenario": "go-coupon-sync-bug",
@@ -72,12 +71,12 @@
       "variant": "high",
       "attempt": 2,
       "passed": true,
-      "duration_s": 54.658863042,
+      "duration_s": 59.102579166,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-3168129478"
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-2011030863"
     },
     {
       "scenario": "go-coupon-sync-bug",
@@ -85,12 +84,12 @@
       "variant": "high",
       "attempt": 3,
       "passed": true,
-      "duration_s": 84.230572791,
+      "duration_s": 82.909987125,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-3998247821"
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-3103121079"
     },
     {
       "scenario": "go-currency-market",
@@ -98,14 +97,14 @@
       "variant": "high",
       "attempt": 1,
       "passed": false,
-      "duration_s": 300.460627667,
+      "duration_s": 301.505572833,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "verify_log": "# money [money.test]\n./money_test.go:8:6: TestFormatMinorUnits redeclared in this block\n\t./money_bench_test.go:8:6: other declaration of TestFormatMinorUnits\n./money_test.go:42:6: TestCountriesForCurrency redeclared in this block\n\t./money_bench_test.go:33:6: other declaration of TestCountriesForCurrency\nFAIL\tmoney [build failed]\nFAIL\n",
-      "agent_error": "e449842df2\nAuthor: bench \u003cbench@local\u003e\nDate:   Fri Aug 14 01:53:55 2026 +0530\n\n    seed\n\ndiff --git a/go.mod b/go.mod\nnew file mode 100644\nindex 0000000..1cb8054\n--- /dev/null\n+++ b/go.mod\n@@ -0,0 +1,3 @@\n+module money\n+\n+go 1.22\ndiff --git a/money.go b/money.go\nnew file mode 100644\nindex 0000000..17d5ea1\n--- /dev/null\n+++ b/money.go\n@@ -0,0 +1,9 @@\n+package money\n+\n+func FormatMinorUnits(amount int64, currency string) string {\n+\tpanic(\"not implemented\")\n+}\n+\n+func CountriesForCurrency(currency string) []string {\n+\tpanic(\"not implemented\")\n+}\n\u003e friday · gemini-3.7-flash\n\u001b[0m← \u001b[0mWrite money.go\nWrote file successfully: money.go\n\u003e friday · gemini-3.7-flash\n\u001b[0m← \u001b[0mWrite money_test.go\nCreated file successfully: money_test.go\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-3080060395"
+      "verify_log": "5.6/libexec/src/testing/testing.go:1872 +0x190\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1875 +0x31c\npanic({0x1026b0d40?, 0x1026e17a0?})\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/runtime/panic.go:783 +0x120\nmoney.FormatMinorUnits(...)\n\t/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-3460354576/money.go:4\nmoney.TestFormatMinorUnits(0x14000003180?)\n\t/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-3460354576/money_bench_test.go:27 +0x64\ntesting.tRunner(0x14000003180, 0x1026e0c88)\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1934 +0xc8\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1997 +0x364\nFAIL\tmoney\t1.020s\nFAIL\n",
+      "agent_error": "\u001b[0m\n\u003e friday · gemini-3.7-flash\n\u001b[0m⚙ \u001b[0mexecute {\"code\":\"const result = await tools.memory.recall({ query: \\\"currency money payments Go\\\" });\\nreturn result;\"} \n\u003e friday · gemini-3.7-flash\n\u001b[0m✱ \u001b[0mGlob \"**/*\" \u001b[90m2 matches\u001b[0m\n\u003e friday · gemini-3.7-flash\n\u001b[0m→ \u001b[0mRead money.go \n\u003e friday · gemini-3.7-flash\n\u001b[0m→ \u001b[0mRead go.mod \n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-3460354576"
     },
     {
       "scenario": "go-currency-market",
@@ -113,69 +112,72 @@
       "variant": "high",
       "attempt": 2,
       "passed": false,
-      "duration_s": 57.887046,
+      "duration_s": 9.34359825,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "verify_log": "# money [money.test]\n./money_test.go:9:6: TestFormatMinorUnits redeclared in this block\n\t./money_bench_test.go:8:6: other declaration of TestFormatMinorUnits\n./money_test.go:56:6: TestCountriesForCurrency redeclared in this block\n\t./money_bench_test.go:33:6: other declaration of TestCountriesForCurrency\nFAIL\tmoney [build failed]\nFAIL\n",
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-522607100"
+      "verify_log": "5.6/libexec/src/testing/testing.go:1872 +0x190\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1875 +0x31c\npanic({0x104eecd40?, 0x104f1d7a0?})\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/runtime/panic.go:783 +0x120\nmoney.FormatMinorUnits(...)\n\t/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-1713659968/money.go:4\nmoney.TestFormatMinorUnits(0x1400012c380?)\n\t/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-1713659968/money_bench_test.go:27 +0x64\ntesting.tRunner(0x1400012c380, 0x104f1cc88)\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1934 +0xc8\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1997 +0x364\nFAIL\tmoney\t1.306s\nFAIL\n",
+      "agent_error": "\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-1713659968"
     },
     {
       "scenario": "go-currency-market",
       "model": "google/gemini-3.7-flash",
       "variant": "high",
       "attempt": 3,
-      "passed": false,
-      "duration_s": 55.387610208,
+      "passed": true,
+      "duration_s": 128.686708791,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "verify_log": "# money [money.test]\n./money_test.go:9:6: TestFormatMinorUnits redeclared in this block\n\t./money_bench_test.go:8:6: other declaration of TestFormatMinorUnits\n./money_test.go:54:6: TestCountriesForCurrency redeclared in this block\n\t./money_bench_test.go:33:6: other declaration of TestCountriesForCurrency\nFAIL\tmoney [build failed]\nFAIL\n",
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-746092585"
+      "agent_error": " matches\u001b[0m\n\u003e friday · gemini-3.7-flash\n\u001b[0m→ \u001b[0mRead money.go \n\u003e friday · gemini-3.7-flash\n\u001b[0m→ \u001b[0mRead go.mod \n\u003e friday · gemini-3.7-flash\n\u001b[0m$ \u001b[0mls -la\ntotal 16\ndrwx------@   5 ankityadav  staff    160 14 Aug 02:18 .\ndrwx------@ 387 ankityadav  staff  12384 14 Aug 02:18 ..\ndrwxr-xr-x@  12 ankityadav  staff    384 14 Aug 02:18 .git\n-rw-r--r--@   1 ankityadav  staff     22 14 Aug 02:18 go.mod\n-rw-r--r--@   1 ankityadav  staff    188 14 Aug 02:18 money.go\n\u003e friday · gemini-3.7-flash\n\u001b[0m$ \u001b[0mgit log -n 5\ncommit 829bdbb575728d894f826c2f343c6f7e8e2aaa0d\nAuthor: bench \u003cbench@local\u003e\nDate:   Fri Aug 14 02:18:21 2026 +0530\n\n    seed\n\u003e friday · gemini-3.7-flash\n\u001b[0m← \u001b[0mWrite money.go\nWrote file successfully: money.go\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-3301405470"
     },
     {
       "scenario": "go-graphql-optional-field",
       "model": "google/gemini-3.7-flash",
       "variant": "high",
       "attempt": 1,
-      "passed": false,
-      "duration_s": 300.528697625,
+      "passed": true,
+      "duration_s": 300.954226416,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "verify_log": "x190\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1875 +0x31c\npanic({0x1006fcd40?, 0x10072d7d0?})\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/runtime/panic.go:783 +0x120\ndiscountsync.FetchDiscount(...)\n\t/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-4014665246/sync.go:14\ndiscountsync.TestModernAPIReturnsCurrencies(0x1400012c380?)\n\t/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-4014665246/fetch_bench_test.go:26 +0x30\ntesting.tRunner(0x1400012c380, 0x10072cca0)\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1934 +0xc8\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1997 +0x364\nFAIL\tdiscountsync\t0.461s\nFAIL\n",
-      "agent_error": "de       string\n+\tCurrencies []string\n+}\ndiff --git a/go.mod b/go.mod\nnew file mode 100644\nindex 0000000..4d11958\n--- /dev/null\n+++ b/go.mod\n@@ -0,0 +1,3 @@\n+module discountsync\n+\n+go 1.22\ndiff --git a/sync.go b/sync.go\nnew file mode 100644\nindex 0000000..57f01a6\n--- /dev/null\n+++ b/sync.go\n@@ -0,0 +1,15 @@\n+package discountsync\n+\n+import \"fmt\"\n+\n+func BuildQuery(id string, withCurrencies bool) string {\n+\tfields := \"title code\"\n+\tif withCurrencies {\n+\t\tfields += \" presentmentCurrencies\"\n+\t}\n+\treturn fmt.Sprintf(\"query { discountNode(id: %q) { %s } }\", id, fields)\n+}\n+\n+func FetchDiscount(c GQLClient, id string) (*Discount, error) {\n+\tpanic(\"not implemented\")\n+}\n\u003e friday · gemini-3.7-flash\n\u001b[0m$ \u001b[0mgit branch -a \u0026\u0026 git tag\n* main\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-4014665246"
+      "agent_error": "cess\n--- PASS: TestFetchDiscount_Success (0.00s)\n=== RUN   TestFetchDiscount_RetryOnDoesntExistOnType\n--- PASS: TestFetchDiscount_RetryOnDoesntExistOnType (0.00s)\n=== RUN   TestFetchDiscount_RetryOnFieldPresentmentCurrencies\n--- PASS: TestFetchDiscount_RetryOnFieldPresentmentCurrencies (0.00s)\n=== RUN   TestFetchDiscount_NoRetryOnOtherGraphQLError\n--- PASS: TestFetchDiscount_NoRetryOnOtherGraphQLError (0.00s)\n=== RUN   TestFetchDiscount_TransportError\n--- PASS: TestFetchDiscount_TransportError (0.00s)\n=== RUN   TestFetchDiscount_RetryTransportError\n--- PASS: TestFetchDiscount_RetryTransportError (0.00s)\n=== RUN   TestFetchDiscount_RetryGraphQLError\n--- PASS: TestFetchDiscount_RetryGraphQLError (0.00s)\nPASS\nok  \tdiscountsync\t0.681s\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-637862621"
     },
     {
       "scenario": "go-graphql-optional-field",
       "model": "google/gemini-3.7-flash",
       "variant": "high",
       "attempt": 2,
-      "passed": true,
-      "duration_s": 300.626959959,
+      "passed": false,
+      "duration_s": 272.958142709,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "agent_error": "== RUN   TestFetchDiscount_RetryOnUnsupportedField/doesn't_exist_on_type\n--- PASS: TestFetchDiscount_RetryOnUnsupportedField (0.00s)\n    --- PASS: TestFetchDiscount_RetryOnUnsupportedField/Field_'presentmentCurrencies' (0.00s)\n    --- PASS: TestFetchDiscount_RetryOnUnsupportedField/doesn't_exist_on_type (0.00s)\n=== RUN   TestFetchDiscount_TransportError\n--- PASS: TestFetchDiscount_TransportError (0.00s)\n=== RUN   TestFetchDiscount_OtherGQLError_NoRetry\n--- PASS: TestFetchDiscount_OtherGQLError_NoRetry (0.00s)\n=== RUN   TestFetchDiscount_RetryTransportError\n--- PASS: TestFetchDiscount_RetryTransportError (0.00s)\n=== RUN   TestFetchDiscount_RetryGQLError\n--- PASS: TestFetchDiscount_RetryGQLError (0.00s)\nPASS\nok  \tdiscountsync\t0.430s\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-1792130253"
+      "verify_log": "x190\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1875 +0x31c\npanic({0x100fe0d40?, 0x1010117d0?})\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/runtime/panic.go:783 +0x120\ndiscountsync.FetchDiscount(...)\n\t/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-3490314016/sync.go:14\ndiscountsync.TestModernAPIReturnsCurrencies(0x1400012c380?)\n\t/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-3490314016/fetch_bench_test.go:26 +0x30\ntesting.tRunner(0x1400012c380, 0x101010ca0)\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1934 +0xc8\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1997 +0x364\nFAIL\tdiscountsync\t0.874s\nFAIL\n",
+      "agent_error": "\u001b[0m\n\u003e friday · gemini-3.7-flash\n\u001b[0m⚙ \u001b[0mexecute {\"code\":\"await tools.memory.recall({ query: \\\"Shopify GraphQL Go\\\" });\"} \n\u003e friday · gemini-3.7-flash\n\u001b[0m✱ \u001b[0mGlob \"*\" \u001b[90m3 matches\u001b[0m\n\u003e friday · gemini-3.7-flash\n\u001b[0m✱ \u001b[0mGlob \"**/*\" \u001b[90m3 matches\u001b[0m\n\u003e friday · gemini-3.7-flash\n\u001b[0m→ \u001b[0mRead api.go \n\u003e friday · gemini-3.7-flash\n\u001b[0m→ \u001b[0mRead sync.go \n\u003e friday · gemini-3.7-flash\n\u001b[0m→ \u001b[0mRead go.mod \n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-3490314016"
     },
     {
       "scenario": "go-graphql-optional-field",
       "model": "google/gemini-3.7-flash",
       "variant": "high",
       "attempt": 3,
-      "passed": true,
-      "duration_s": 73.308190292,
+      "passed": false,
+      "duration_s": 74.951081583,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-1480880888"
+      "verify_log": "x190\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1875 +0x31c\npanic({0x104a34d40?, 0x104a657d0?})\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/runtime/panic.go:783 +0x120\ndiscountsync.FetchDiscount(...)\n\t/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-3034057828/sync.go:14\ndiscountsync.TestModernAPIReturnsCurrencies(0x1400012c380?)\n\t/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-3034057828/fetch_bench_test.go:26 +0x30\ntesting.tRunner(0x1400012c380, 0x104a64ca0)\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1934 +0xc8\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1997 +0x364\nFAIL\tdiscountsync\t0.441s\nFAIL\n",
+      "agent_error": "\u001b[0m\n\u003e friday · gemini-3.7-flash\n\u001b[0m⚙ \u001b[0mexecute {\"code\":\"const recall = await tools.memory.recall({ query: \\\"*\\\" });\\nreturn recall;\"} \n\u003e friday · gemini-3.7-flash\n\u001b[0m✱ \u001b[0mGlob \"*\" \u001b[90m3 matches\u001b[0m\n\u003e friday · gemini-3.7-flash\n\u001b[0m✱ \u001b[0mGlob \"**/*\" \u001b[90m3 matches\u001b[0m\n\u003e friday · gemini-3.7-flash\n\u001b[0m→ \u001b[0mRead api.go \n\u003e friday · gemini-3.7-flash\n\u001b[0m→ \u001b[0mRead sync.go \n\u003e friday · gemini-3.7-flash\n\u001b[0m→ \u001b[0mRead go.mod \n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-3034057828"
     },
     {
       "scenario": "go-portlist",
@@ -183,68 +185,70 @@
       "variant": "high",
       "attempt": 1,
       "passed": false,
-      "duration_s": 300.462789458,
+      "duration_s": 300.441743542,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "verify_log": "# portlist [portlist.test]\n./portlist_test.go:8:6: TestParseLsof redeclared in this block\n\t./portlist_bench_test.go:8:6: other declaration of TestParseLsof\nFAIL\tportlist [build failed]\nFAIL\n",
-      "agent_error": " false\n+\t\t}\n+\t\tportStr = rem[1:]\n+\t} else {\n+\t\tif strings.Contains(raw, \"[\") || strings.Contains(raw, \"]\") {\n+\t\t\treturn \"\", 0, false\n+\t\t}\n+\t\tif strings.Count(raw, \":\") != 1 {\n+\t\t\treturn \"\", 0, false\n+\t\t}\n+\t\tcolonIdx := strings.Index(raw, \":\")\n+\t\thost = raw[:colonIdx]\n+\t\tportStr = raw[colonIdx+1:]\n+\t\tif len(host) == 0 {\n+\t\t\treturn \"\", 0, false\n+\t\t}\n+\t}\n+\n+\tif strings.Contains(host, \"-\u003e\") || strings.Contains(portStr, \"-\u003e\") {\n+\t\treturn \"\", 0, false\n+\t}\n+\n+\tif len(portStr) == 0 {\n+\t\treturn \"\", 0, false\n+\t}\n+\tfor _, r := range portStr {\n+\t\tif r \u003c '0' || r \u003e '9' {\n+\t\t\treturn \"\", 0, false\n+\t\t}\n+\t}\n+\n+\tport, err := strconv.Atoi(portStr)\n+\tif err != nil || port \u003c 0 || port \u003e 65535 {\n+\t\treturn \"\", 0, false\n+\t}\n+\n+\treturn host, port, true\n }\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-2863004572"
+      "verify_log": "ellar/go/1.25.6/libexec/src/testing/testing.go:1872 +0x190\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1875 +0x31c\npanic({0x103004e20?, 0x103035940?})\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/runtime/panic.go:783 +0x120\nportlist.ParseLsof(...)\n\t/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-1291516554/portlist.go:11\nportlist.TestParseLsof(0x14000003500?)\n\t/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-1291516554/portlist_bench_test.go:17 +0xdc\ntesting.tRunner(0x14000003500, 0x103034e20)\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1934 +0xc8\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1997 +0x364\nFAIL\tportlist\t0.404s\nFAIL\n",
+      "agent_error": " \u001b[0mlsof -nP -iTCP -sTCP:LISTEN -F pcn | head -n 30\np276\ncbun\nf15\nn127.0.0.1:60957\nf16\nn127.0.0.1:60983\np642\ncrapportd\nf11\nn*:63828\nf16\nn*:63828\np644\ncControlCenter\nf9\nn*:7000\nf10\nn*:7000\nf11\nn*:5000\nf12\nn*:5000\np849\ncopencode2.exe\nf8\nn127.0.0.1:4100\nf595\nn127.0.0.1:50315\nf1315\nn127.0.0.1:55529\n\u003e friday · gemini-3.7-flash\n\u001b[0m$ \u001b[0mlsof -nP -iTCP -sTCP:LISTEN -F pcn | grep -E '^n' | head -n 30\nn127.0.0.1:60957\nn127.0.0.1:60983\nn*:63828\nn*:63828\nn*:7000\nn*:7000\nn*:5000\nn*:5000\nn127.0.0.1:4100\nn127.0.0.1:50315\nn127.0.0.1:55529\nn127.0.0.1:20241\nn127.0.0.1:2019\nn*:4410\nn*:3306\nn*:3306\nn127.0.0.1:49256\nn127.0.0.1:11434\nn127.0.0.1:49997\nn127.0.0.1:5273\nn127.0.0.1:8099\nn127.0.0.1:49374\nn127.0.0.1:53283\nn127.0.0.1:54281\nn127.0.0.1:55179\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-1291516554"
     },
     {
       "scenario": "go-portlist",
       "model": "google/gemini-3.7-flash",
       "variant": "high",
       "attempt": 2,
-      "passed": false,
-      "duration_s": 82.267656833,
+      "passed": true,
+      "duration_s": 273.676938042,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "verify_log": "# portlist [portlist.test]\n./portlist_test.go:8:6: TestParseLsof redeclared in this block\n\t./portlist_bench_test.go:8:6: other declaration of TestParseLsof\nFAIL\tportlist [build failed]\nFAIL\n",
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-1257542400"
+      "agent_error": "-port_lines_skipped (0.00s)\n    --- PASS: TestParseLsof/windows_CRLF_endings (0.00s)\n    --- PASS: TestParseLsof/commands_with_spaces (0.00s)\n    --- PASS: TestParseLsof/ipv6_various_bracket_formats (0.00s)\n    --- PASS: TestParseLsof/real_lsof_output_snippet (0.00s)\nPASS\nok  \tportlist\t0.174s\n\u003e friday · gemini-3.7-flash\n\u001b[0m$ \u001b[0mrm temp_test.go\n(no output)\n\u003e friday · gemini-3.7-flash\n\u001b[0m→ \u001b[0mRead portlist.go \n\u003e friday · gemini-3.7-flash\n\u001b[0m$ \u001b[0mgit status\nOn branch main\nChanges not staged for commit:\n  (use \"git add \u003cfile\u003e...\" to update what will be committed)\n  (use \"git restore \u003cfile\u003e...\" to discard changes in working directory)\n\tmodified:   portlist.go\n\nno changes added to commit (use \"git add\" and/or \"git commit -a\")\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-773291586"
     },
     {
       "scenario": "go-portlist",
       "model": "google/gemini-3.7-flash",
       "variant": "high",
       "attempt": 3,
+      "passed": true,
+      "duration_s": 114.101474792,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-1289907197"
+    },
+    {
+      "scenario": "go-webhook-retry",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 1,
       "passed": false,
-      "duration_s": 89.310702125,
+      "duration_s": 13.905343709,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "verify_log": "# portlist [portlist.test]\n./portlist_test.go:8:6: TestParseLsof redeclared in this block\n\t./portlist_bench_test.go:8:6: other declaration of TestParseLsof\nFAIL\tportlist [build failed]\nFAIL\n",
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-2573883052"
-    },
-    {
-      "scenario": "go-webhook-retry",
-      "model": "google/gemini-3.7-flash",
-      "variant": "high",
-      "attempt": 1,
-      "passed": true,
-      "duration_s": 64.160466416,
-      "cost_usd": 0,
-      "tokens_in": 0,
-      "tokens_out": 0,
-      "steps": 0,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-1421969210"
+      "verify_log": "2026/08/14 02:18:22 hmac mismatch for shop webhook, continuing anyway\n--- FAIL: TestInvalidSignatureRejected (0.00s)\n    handler_bench_test.go:31: bad hmac: got 200 want 401\n2026/08/14 02:18:22 discount sync failed: shop not found\n--- FAIL: TestProcessingFailureReturns500 (0.00s)\n    handler_bench_test.go:39: failed processing: got 200 want 500 so platform retries\nFAIL\nFAIL\twebhooksvc\t2.008s\nFAIL\n",
+      "agent_error": "\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-3527129559"
     },
     {
       "scenario": "go-webhook-retry",
       "model": "google/gemini-3.7-flash",
       "variant": "high",
       "attempt": 2,
-      "passed": true,
-      "duration_s": 68.185012,
+      "passed": false,
+      "duration_s": 100.138346792,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-2351651340"
+      "verify_log": "# webhooksvc [webhooksvc.test]\n./handler_bench_test.go:21:20: cannot use computeHMAC([]byte(body)) (value of type []byte) as string value in argument to do\n./handler_bench_test.go:37:20: cannot use computeHMAC([]byte(body)) (value of type []byte) as string value in argument to do\nFAIL\twebhooksvc [build failed]\nFAIL\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-465865003"
     },
     {
       "scenario": "go-webhook-retry",
@@ -252,12 +256,12 @@
       "variant": "high",
       "attempt": 3,
       "passed": true,
-      "duration_s": 63.183998791,
+      "duration_s": 78.074225583,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-397011224"
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-114885075"
     },
     {
       "scenario": "js-cart-progress",
@@ -265,13 +269,12 @@
       "variant": "high",
       "attempt": 1,
       "passed": true,
-      "duration_s": 300.387218625,
+      "duration_s": 264.889225875,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "agent_error": ") {\n+  const sym = typeof symbol === 'string' ? symbol : (symbol != null ? String(symbol) : '');\n+  if (typeof cents !== 'number' || !Number.isFinite(cents)) {\n+    return `${sym}0.00`;\n+  }\n+\n+  const isNegative = cents \u003c 0;\n+  const absCents = Math.abs(cents);\n+  const roundedCents = Math.round(absCents);\n+\n+  const dollars = Math.floor(roundedCents / 100);\n+  const remainder = roundedCents % 100;\n+\n+  const dollarsFormatted = dollars.toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, ',');\n+  const centsFormatted = remainder.toString().padStart(2, '0');\n+\n+  const sign = isNegative \u0026\u0026 roundedCents \u003e 0 ? '-' : '';\n+  return `${sign}${sym}${dollarsFormatted}.${centsFormatted}`;\n }\n \n module.exports = { freeShippingState, formatMoney };\n\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-2548360380"
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-882330672"
     },
     {
       "scenario": "js-cart-progress",
@@ -279,12 +282,13 @@
       "variant": "high",
       "attempt": 2,
       "passed": true,
-      "duration_s": 99.94812025,
+      "duration_s": 300.476997417,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-1834597788"
+      "agent_error": "\u001b[0m\n\u003e friday · gemini-3.7-flash\n\u001b[0m⚙ \u001b[0mexecute {\"code\":\"const res = await tools.memory.recall({ query: \\\"*\\\" });\\nreturn res;\"} \n\u003e friday · gemini-3.7-flash\n\u001b[0m✱ \u001b[0mGlob \"*\" \u001b[90m2 matches\u001b[0m\n\u003e friday · gemini-3.7-flash\n\u001b[0m→ \u001b[0mRead cart-progress.js \n\u003e friday · gemini-3.7-flash\n\u001b[0m→ \u001b[0mRead test.js \n\u003e friday · gemini-3.7-flash\n\u001b[0m← \u001b[0mWrite cart-progress.js\nWrote file successfully: cart-progress.js\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-3157598942"
     },
     {
       "scenario": "js-cart-progress",
@@ -292,12 +296,12 @@
       "variant": "high",
       "attempt": 3,
       "passed": true,
-      "duration_s": 77.706585375,
+      "duration_s": 81.82288575,
       "cost_usd": 0,
       "tokens_in": 0,
       "tokens_out": 0,
       "steps": 0,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-4033422634"
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-3026821336"
     },
     {
       "scenario": "go-coupon-sync-bug",
