@@ -203,13 +203,14 @@ func runOne(root string, sc Scenario, model string, keep bool) Result {
 	gitRun(work, "commit", "-qm", "seed", "--no-gpg-sign")
 
 	start := time.Now()
-	args := []string{"run", "-m", model, "--dir", work, "--auto", "--title", "bench:" + sc.Name}
+	modelArg := model
 	if variant != "" {
-		args = append(args, "--variant", variant)
+		modelArg = model + "#" + variant
 	}
-	cmd := exec.Command("opencode", append(args, sc.Prompt)...)
+	args := []string{"run", "-m", modelArg, "--auto", "--title", "bench:" + sc.Name}
+	cmd := exec.Command("opencode2", append(args, sc.Prompt)...)
 	cmd.Dir = work
-	cmd.Env = append(os.Environ(), "OPENCODE_DISABLE_LSP_DOWNLOAD=true")
+	cmd.Env = append(os.Environ(), "PWD="+work, "OPENCODE_DISABLE_LSP_DOWNLOAD=true")
 	done := make(chan error, 1)
 	var agentOut strings.Builder
 	cmd.Stdout = &agentOut
