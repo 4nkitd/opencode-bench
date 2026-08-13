@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-12T23:19:05+05:30",
+  "generated_at": "2026-08-14T02:07:09+05:30",
   "scenarios": [
     {
       "name": "go-coupon-sync-bug",
@@ -11,7 +11,7 @@
     },
     {
       "name": "go-currency-market",
-      "title": "Currency & Market Mapping",
+      "title": "Currency \u0026 Market Mapping",
       "lang": "Go",
       "difficulty": "Medium",
       "goal": "Implement ISO 4217 minor-unit money formatting (0/2/3 decimal currencies, negatives) and currency-to-country market mapping from a written spec.",
@@ -23,7 +23,7 @@
       "lang": "Go",
       "difficulty": "Hard",
       "goal": "Query an optional GraphQL field for market support, but degrade gracefully when the API version rejects it: retry once without the field, propagate every other error.",
-      "signal": "Recreates a real 3-day production outage: an agent added presentmentCurrencies to a discount query, older API versions rejected the whole query, and the handler swallowed the failure. Tests schema-evolution defensiveness \u2014 distinguishing 'field not supported' from real errors and never silently succeeding."
+      "signal": "Recreates a real 3-day production outage: an agent added presentmentCurrencies to a discount query, older API versions rejected the whole query, and the handler swallowed the failure. Tests schema-evolution defensiveness — distinguishing 'field not supported' from real errors and never silently succeeding."
     },
     {
       "name": "go-portlist",
@@ -39,7 +39,7 @@
       "lang": "Go",
       "difficulty": "Hard",
       "goal": "Fix a Shopify-style webhook handler that returns HTTP 200 even when processing fails, and rejects nothing on HMAC mismatch.",
-      "signal": "Distilled from a real production incident where broken discount syncs went silent for 3 days. Tests whether a model understands delivery/retry contracts and auth-before-processing \u2014 not just making code compile. The most discriminating task in the suite."
+      "signal": "Distilled from a real production incident where broken discount syncs went silent for 3 days. Tests whether a model understands delivery/retry contracts and auth-before-processing — not just making code compile. The most discriminating task in the suite."
     },
     {
       "name": "js-cart-progress",
@@ -53,6 +53,254 @@
   "runs": [
     {
       "scenario": "go-coupon-sync-bug",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 1,
+      "passed": false,
+      "duration_s": 300.991449916,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "verify_log": "--- FAIL: TestLockReleasedAfterError (0.00s)\n    sync_bench_test.go:45: lock stuck after a failed sync\n--- FAIL: TestRetryAfterFailure (0.00s)\n    sync_test.go:30: second sync should retry and succeed, got sync already in flight\n--- FAIL: TestFailedCouponDoesNotBlockOthers (0.00s)\n    sync_test.go:49: a failing coupon must not stop the rest of the batch from syncing\nFAIL\nFAIL\tcouponsync\t0.487s\nFAIL\n",
+      "agent_error": "\u001b[0m\n\u003e friday · gemini-3.7-flash\n\u001b[0m⚙ \u001b[0mexecute {\"code\":\"const result = await tools.memory.recall({ query: \\\"go coupon sync\\\" });\\nreturn result;\\n\"} \n\u003e friday · gemini-3.7-flash\n\u001b[0m✱ \u001b[0mGlob \"**/*\" \u001b[90m4 matches\u001b[0m\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-1625291434"
+    },
+    {
+      "scenario": "go-coupon-sync-bug",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 2,
+      "passed": true,
+      "duration_s": 54.658863042,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-3168129478"
+    },
+    {
+      "scenario": "go-coupon-sync-bug",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 3,
+      "passed": true,
+      "duration_s": 84.230572791,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-3998247821"
+    },
+    {
+      "scenario": "go-currency-market",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 1,
+      "passed": false,
+      "duration_s": 300.460627667,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "verify_log": "# money [money.test]\n./money_test.go:8:6: TestFormatMinorUnits redeclared in this block\n\t./money_bench_test.go:8:6: other declaration of TestFormatMinorUnits\n./money_test.go:42:6: TestCountriesForCurrency redeclared in this block\n\t./money_bench_test.go:33:6: other declaration of TestCountriesForCurrency\nFAIL\tmoney [build failed]\nFAIL\n",
+      "agent_error": "e449842df2\nAuthor: bench \u003cbench@local\u003e\nDate:   Fri Aug 14 01:53:55 2026 +0530\n\n    seed\n\ndiff --git a/go.mod b/go.mod\nnew file mode 100644\nindex 0000000..1cb8054\n--- /dev/null\n+++ b/go.mod\n@@ -0,0 +1,3 @@\n+module money\n+\n+go 1.22\ndiff --git a/money.go b/money.go\nnew file mode 100644\nindex 0000000..17d5ea1\n--- /dev/null\n+++ b/money.go\n@@ -0,0 +1,9 @@\n+package money\n+\n+func FormatMinorUnits(amount int64, currency string) string {\n+\tpanic(\"not implemented\")\n+}\n+\n+func CountriesForCurrency(currency string) []string {\n+\tpanic(\"not implemented\")\n+}\n\u003e friday · gemini-3.7-flash\n\u001b[0m← \u001b[0mWrite money.go\nWrote file successfully: money.go\n\u003e friday · gemini-3.7-flash\n\u001b[0m← \u001b[0mWrite money_test.go\nCreated file successfully: money_test.go\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-3080060395"
+    },
+    {
+      "scenario": "go-currency-market",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 2,
+      "passed": false,
+      "duration_s": 57.887046,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "verify_log": "# money [money.test]\n./money_test.go:9:6: TestFormatMinorUnits redeclared in this block\n\t./money_bench_test.go:8:6: other declaration of TestFormatMinorUnits\n./money_test.go:56:6: TestCountriesForCurrency redeclared in this block\n\t./money_bench_test.go:33:6: other declaration of TestCountriesForCurrency\nFAIL\tmoney [build failed]\nFAIL\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-522607100"
+    },
+    {
+      "scenario": "go-currency-market",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 3,
+      "passed": false,
+      "duration_s": 55.387610208,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "verify_log": "# money [money.test]\n./money_test.go:9:6: TestFormatMinorUnits redeclared in this block\n\t./money_bench_test.go:8:6: other declaration of TestFormatMinorUnits\n./money_test.go:54:6: TestCountriesForCurrency redeclared in this block\n\t./money_bench_test.go:33:6: other declaration of TestCountriesForCurrency\nFAIL\tmoney [build failed]\nFAIL\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-746092585"
+    },
+    {
+      "scenario": "go-graphql-optional-field",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 1,
+      "passed": false,
+      "duration_s": 300.528697625,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "verify_log": "x190\ntesting.tRunner.func1()\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1875 +0x31c\npanic({0x1006fcd40?, 0x10072d7d0?})\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/runtime/panic.go:783 +0x120\ndiscountsync.FetchDiscount(...)\n\t/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-4014665246/sync.go:14\ndiscountsync.TestModernAPIReturnsCurrencies(0x1400012c380?)\n\t/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-4014665246/fetch_bench_test.go:26 +0x30\ntesting.tRunner(0x1400012c380, 0x10072cca0)\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1934 +0xc8\ncreated by testing.(*T).Run in goroutine 1\n\t/opt/homebrew/Cellar/go/1.25.6/libexec/src/testing/testing.go:1997 +0x364\nFAIL\tdiscountsync\t0.461s\nFAIL\n",
+      "agent_error": "de       string\n+\tCurrencies []string\n+}\ndiff --git a/go.mod b/go.mod\nnew file mode 100644\nindex 0000000..4d11958\n--- /dev/null\n+++ b/go.mod\n@@ -0,0 +1,3 @@\n+module discountsync\n+\n+go 1.22\ndiff --git a/sync.go b/sync.go\nnew file mode 100644\nindex 0000000..57f01a6\n--- /dev/null\n+++ b/sync.go\n@@ -0,0 +1,15 @@\n+package discountsync\n+\n+import \"fmt\"\n+\n+func BuildQuery(id string, withCurrencies bool) string {\n+\tfields := \"title code\"\n+\tif withCurrencies {\n+\t\tfields += \" presentmentCurrencies\"\n+\t}\n+\treturn fmt.Sprintf(\"query { discountNode(id: %q) { %s } }\", id, fields)\n+}\n+\n+func FetchDiscount(c GQLClient, id string) (*Discount, error) {\n+\tpanic(\"not implemented\")\n+}\n\u003e friday · gemini-3.7-flash\n\u001b[0m$ \u001b[0mgit branch -a \u0026\u0026 git tag\n* main\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-4014665246"
+    },
+    {
+      "scenario": "go-graphql-optional-field",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 2,
+      "passed": true,
+      "duration_s": 300.626959959,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "agent_error": "== RUN   TestFetchDiscount_RetryOnUnsupportedField/doesn't_exist_on_type\n--- PASS: TestFetchDiscount_RetryOnUnsupportedField (0.00s)\n    --- PASS: TestFetchDiscount_RetryOnUnsupportedField/Field_'presentmentCurrencies' (0.00s)\n    --- PASS: TestFetchDiscount_RetryOnUnsupportedField/doesn't_exist_on_type (0.00s)\n=== RUN   TestFetchDiscount_TransportError\n--- PASS: TestFetchDiscount_TransportError (0.00s)\n=== RUN   TestFetchDiscount_OtherGQLError_NoRetry\n--- PASS: TestFetchDiscount_OtherGQLError_NoRetry (0.00s)\n=== RUN   TestFetchDiscount_RetryTransportError\n--- PASS: TestFetchDiscount_RetryTransportError (0.00s)\n=== RUN   TestFetchDiscount_RetryGQLError\n--- PASS: TestFetchDiscount_RetryGQLError (0.00s)\nPASS\nok  \tdiscountsync\t0.430s\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-1792130253"
+    },
+    {
+      "scenario": "go-graphql-optional-field",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 3,
+      "passed": true,
+      "duration_s": 73.308190292,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-1480880888"
+    },
+    {
+      "scenario": "go-portlist",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 1,
+      "passed": false,
+      "duration_s": 300.462789458,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "verify_log": "# portlist [portlist.test]\n./portlist_test.go:8:6: TestParseLsof redeclared in this block\n\t./portlist_bench_test.go:8:6: other declaration of TestParseLsof\nFAIL\tportlist [build failed]\nFAIL\n",
+      "agent_error": " false\n+\t\t}\n+\t\tportStr = rem[1:]\n+\t} else {\n+\t\tif strings.Contains(raw, \"[\") || strings.Contains(raw, \"]\") {\n+\t\t\treturn \"\", 0, false\n+\t\t}\n+\t\tif strings.Count(raw, \":\") != 1 {\n+\t\t\treturn \"\", 0, false\n+\t\t}\n+\t\tcolonIdx := strings.Index(raw, \":\")\n+\t\thost = raw[:colonIdx]\n+\t\tportStr = raw[colonIdx+1:]\n+\t\tif len(host) == 0 {\n+\t\t\treturn \"\", 0, false\n+\t\t}\n+\t}\n+\n+\tif strings.Contains(host, \"-\u003e\") || strings.Contains(portStr, \"-\u003e\") {\n+\t\treturn \"\", 0, false\n+\t}\n+\n+\tif len(portStr) == 0 {\n+\t\treturn \"\", 0, false\n+\t}\n+\tfor _, r := range portStr {\n+\t\tif r \u003c '0' || r \u003e '9' {\n+\t\t\treturn \"\", 0, false\n+\t\t}\n+\t}\n+\n+\tport, err := strconv.Atoi(portStr)\n+\tif err != nil || port \u003c 0 || port \u003e 65535 {\n+\t\treturn \"\", 0, false\n+\t}\n+\n+\treturn host, port, true\n }\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-2863004572"
+    },
+    {
+      "scenario": "go-portlist",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 2,
+      "passed": false,
+      "duration_s": 82.267656833,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "verify_log": "# portlist [portlist.test]\n./portlist_test.go:8:6: TestParseLsof redeclared in this block\n\t./portlist_bench_test.go:8:6: other declaration of TestParseLsof\nFAIL\tportlist [build failed]\nFAIL\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-1257542400"
+    },
+    {
+      "scenario": "go-portlist",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 3,
+      "passed": false,
+      "duration_s": 89.310702125,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "verify_log": "# portlist [portlist.test]\n./portlist_test.go:8:6: TestParseLsof redeclared in this block\n\t./portlist_bench_test.go:8:6: other declaration of TestParseLsof\nFAIL\tportlist [build failed]\nFAIL\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-2573883052"
+    },
+    {
+      "scenario": "go-webhook-retry",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 64.160466416,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-1421969210"
+    },
+    {
+      "scenario": "go-webhook-retry",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 2,
+      "passed": true,
+      "duration_s": 68.185012,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-2351651340"
+    },
+    {
+      "scenario": "go-webhook-retry",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 3,
+      "passed": true,
+      "duration_s": 63.183998791,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-397011224"
+    },
+    {
+      "scenario": "js-cart-progress",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 1,
+      "passed": true,
+      "duration_s": 300.387218625,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "agent_error": ") {\n+  const sym = typeof symbol === 'string' ? symbol : (symbol != null ? String(symbol) : '');\n+  if (typeof cents !== 'number' || !Number.isFinite(cents)) {\n+    return `${sym}0.00`;\n+  }\n+\n+  const isNegative = cents \u003c 0;\n+  const absCents = Math.abs(cents);\n+  const roundedCents = Math.round(absCents);\n+\n+  const dollars = Math.floor(roundedCents / 100);\n+  const remainder = roundedCents % 100;\n+\n+  const dollarsFormatted = dollars.toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, ',');\n+  const centsFormatted = remainder.toString().padStart(2, '0');\n+\n+  const sign = isNegative \u0026\u0026 roundedCents \u003e 0 ? '-' : '';\n+  return `${sign}${sym}${dollarsFormatted}.${centsFormatted}`;\n }\n \n module.exports = { freeShippingState, formatMoney };\n\n\u003e friday · gemini-3.7-flash\n\u001b[91m\u001b[1mError: \u001b[0mTransport\n",
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-2548360380"
+    },
+    {
+      "scenario": "js-cart-progress",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 2,
+      "passed": true,
+      "duration_s": 99.94812025,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-1834597788"
+    },
+    {
+      "scenario": "js-cart-progress",
+      "model": "google/gemini-3.7-flash",
+      "variant": "high",
+      "attempt": 3,
+      "passed": true,
+      "duration_s": 77.706585375,
+      "cost_usd": 0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "steps": 0,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-4033422634"
+    },
+    {
+      "scenario": "go-coupon-sync-bug",
       "model": "anthropic/claude-fable-5",
       "variant": "low",
       "attempt": 1,
@@ -61,8 +309,8 @@
       "cost_usd": 0.20904650000000002,
       "tokens_in": 70378,
       "tokens_out": 911,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-61510833",
-      "steps": 4
+      "steps": 4,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-61510833"
     },
     {
       "scenario": "go-coupon-sync-bug",
@@ -74,8 +322,8 @@
       "cost_usd": 0.20113099999999998,
       "tokens_in": 70166,
       "tokens_out": 782,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-3094698275",
-      "steps": 4
+      "steps": 4,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-3094698275"
     },
     {
       "scenario": "go-coupon-sync-bug",
@@ -87,8 +335,8 @@
       "cost_usd": 0.219145,
       "tokens_in": 86768,
       "tokens_out": 820,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-1624901838",
-      "steps": 4
+      "steps": 4,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-1624901838"
     },
     {
       "scenario": "go-currency-market",
@@ -100,8 +348,8 @@
       "cost_usd": 0.205731,
       "tokens_in": 68807,
       "tokens_out": 1001,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-4212313730",
-      "steps": 3
+      "steps": 3,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-4212313730"
     },
     {
       "scenario": "go-currency-market",
@@ -113,8 +361,8 @@
       "cost_usd": 0.2058835,
       "tokens_in": 68837,
       "tokens_out": 1000,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-3456192646",
-      "steps": 3
+      "steps": 3,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-3456192646"
     },
     {
       "scenario": "go-currency-market",
@@ -126,8 +374,8 @@
       "cost_usd": 0.20464300000000002,
       "tokens_in": 68831,
       "tokens_out": 976,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-2238837029",
-      "steps": 3
+      "steps": 3,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-2238837029"
     },
     {
       "scenario": "go-graphql-optional-field",
@@ -139,8 +387,8 @@
       "cost_usd": 0.280041,
       "tokens_in": 90543,
       "tokens_out": 1720,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-2618853388",
-      "steps": 6
+      "steps": 6,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-2618853388"
     },
     {
       "scenario": "go-graphql-optional-field",
@@ -152,8 +400,8 @@
       "cost_usd": 0.263716,
       "tokens_in": 89605,
       "tokens_out": 1490,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-1102686211",
-      "steps": 6
+      "steps": 6,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-1102686211"
     },
     {
       "scenario": "go-graphql-optional-field",
@@ -165,8 +413,8 @@
       "cost_usd": 0.38785,
       "tokens_in": 90454,
       "tokens_out": 1566,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-1727745076",
-      "steps": 6
+      "steps": 6,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-1727745076"
     },
     {
       "scenario": "go-portlist",
@@ -178,8 +426,8 @@
       "cost_usd": 0.2591015,
       "tokens_in": 87380,
       "tokens_out": 1551,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-2376049091",
-      "steps": 5
+      "steps": 5,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-2376049091"
     },
     {
       "scenario": "go-portlist",
@@ -191,8 +439,8 @@
       "cost_usd": 0.2665685,
       "tokens_in": 104363,
       "tokens_out": 1410,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-1454211176",
-      "steps": 5
+      "steps": 5,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-1454211176"
     },
     {
       "scenario": "go-portlist",
@@ -204,8 +452,8 @@
       "cost_usd": 0.3485215,
       "tokens_in": 142776,
       "tokens_out": 2074,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-2942692190",
-      "steps": 7
+      "steps": 7,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-2942692190"
     },
     {
       "scenario": "go-webhook-retry",
@@ -217,8 +465,8 @@
       "cost_usd": 0.3190485,
       "tokens_in": 69562,
       "tokens_out": 866,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-295155663",
-      "steps": 4
+      "steps": 4,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-295155663"
     },
     {
       "scenario": "go-webhook-retry",
@@ -230,8 +478,8 @@
       "cost_usd": 0.1971515,
       "tokens_in": 69230,
       "tokens_out": 783,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-1174856432",
-      "steps": 3
+      "steps": 3,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-1174856432"
     },
     {
       "scenario": "go-webhook-retry",
@@ -243,8 +491,8 @@
       "cost_usd": 0.242225,
       "tokens_in": 87992,
       "tokens_out": 1201,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-125600632",
-      "steps": 4
+      "steps": 4,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-125600632"
     },
     {
       "scenario": "js-cart-progress",
@@ -256,8 +504,8 @@
       "cost_usd": 0.267539,
       "tokens_in": 106317,
       "tokens_out": 1328,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-3158819687",
-      "steps": 6
+      "steps": 6,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-3158819687"
     },
     {
       "scenario": "js-cart-progress",
@@ -269,8 +517,8 @@
       "cost_usd": 0.213719,
       "tokens_in": 69855,
       "tokens_out": 1057,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-2865267180",
-      "steps": 4
+      "steps": 4,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-2865267180"
     },
     {
       "scenario": "js-cart-progress",
@@ -282,8 +530,8 @@
       "cost_usd": 0.32713349999999997,
       "tokens_in": 69803,
       "tokens_out": 1010,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-3453855773",
-      "steps": 4
+      "steps": 4,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-3453855773"
     },
     {
       "scenario": "go-coupon-sync-bug",
@@ -295,8 +543,8 @@
       "cost_usd": 0.12334925,
       "tokens_in": 91345,
       "tokens_out": 978,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-654863414",
-      "steps": 5
+      "steps": 5,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-654863414"
     },
     {
       "scenario": "go-coupon-sync-bug",
@@ -308,8 +556,8 @@
       "cost_usd": 0.1280715,
       "tokens_in": 92381,
       "tokens_out": 1082,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-519044098",
-      "steps": 5
+      "steps": 5,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-519044098"
     },
     {
       "scenario": "go-coupon-sync-bug",
@@ -321,8 +569,8 @@
       "cost_usd": 0.1856305,
       "tokens_in": 92429,
       "tokens_out": 1042,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-2829711402",
-      "steps": 5
+      "steps": 5,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-2829711402"
     },
     {
       "scenario": "go-currency-market",
@@ -334,8 +582,8 @@
       "cost_usd": 0.18993575,
       "tokens_in": 88039,
       "tokens_out": 1604,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-2468917877",
-      "steps": 4
+      "steps": 4,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-2468917877"
     },
     {
       "scenario": "go-currency-market",
@@ -347,8 +595,8 @@
       "cost_usd": 0.1313675,
       "tokens_in": 88615,
       "tokens_out": 1544,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-3058007955",
-      "steps": 4
+      "steps": 4,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-3058007955"
     },
     {
       "scenario": "go-currency-market",
@@ -360,8 +608,8 @@
       "cost_usd": 0.16233475,
       "tokens_in": 126893,
       "tokens_out": 1932,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-2735480381",
-      "steps": 7
+      "steps": 7,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-2735480381"
     },
     {
       "scenario": "go-graphql-optional-field",
@@ -373,8 +621,8 @@
       "cost_usd": 0.2123035,
       "tokens_in": 110563,
       "tokens_out": 1756,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-773397791",
-      "steps": 7
+      "steps": 7,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-773397791"
     },
     {
       "scenario": "go-graphql-optional-field",
@@ -386,8 +634,8 @@
       "cost_usd": 0.158237,
       "tokens_in": 110821,
       "tokens_out": 1896,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-2120666511",
-      "steps": 7
+      "steps": 7,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-2120666511"
     },
     {
       "scenario": "go-graphql-optional-field",
@@ -399,8 +647,8 @@
       "cost_usd": 0.13938224999999999,
       "tokens_in": 90988,
       "tokens_out": 1718,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-2160982535",
-      "steps": 4
+      "steps": 4,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-2160982535"
     },
     {
       "scenario": "go-portlist",
@@ -412,8 +660,8 @@
       "cost_usd": 0.12783175000000002,
       "tokens_in": 87534,
       "tokens_out": 1481,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-3442960234",
-      "steps": 4
+      "steps": 4,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-3442960234"
     },
     {
       "scenario": "go-portlist",
@@ -425,8 +673,8 @@
       "cost_usd": 0.13340475,
       "tokens_in": 88602,
       "tokens_out": 1620,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-3647124035",
-      "steps": 4
+      "steps": 4,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-3647124035"
     },
     {
       "scenario": "go-portlist",
@@ -438,8 +686,8 @@
       "cost_usd": 0.13454325,
       "tokens_in": 88940,
       "tokens_out": 1639,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-3517468346",
-      "steps": 4
+      "steps": 4,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-3517468346"
     },
     {
       "scenario": "go-webhook-retry",
@@ -451,8 +699,8 @@
       "cost_usd": 0.12576575,
       "tokens_in": 90035,
       "tokens_out": 1243,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-3708055859",
-      "steps": 4
+      "steps": 4,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-3708055859"
     },
     {
       "scenario": "go-webhook-retry",
@@ -464,8 +712,8 @@
       "cost_usd": 0.14180675,
       "tokens_in": 110107,
       "tokens_out": 1366,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-933420406",
-      "steps": 6
+      "steps": 6,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-933420406"
     },
     {
       "scenario": "go-webhook-retry",
@@ -477,8 +725,8 @@
       "cost_usd": 0.14417125,
       "tokens_in": 110148,
       "tokens_out": 1457,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-3022839966",
-      "steps": 6
+      "steps": 6,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-3022839966"
     },
     {
       "scenario": "js-cart-progress",
@@ -490,8 +738,8 @@
       "cost_usd": 0.112868,
       "tokens_in": 70713,
       "tokens_out": 1196,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-1851708503",
-      "steps": 3
+      "steps": 3,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-1851708503"
     },
     {
       "scenario": "js-cart-progress",
@@ -503,8 +751,8 @@
       "cost_usd": 0.126082,
       "tokens_in": 89138,
       "tokens_out": 1312,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-191191660",
-      "steps": 4
+      "steps": 4,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-191191660"
     },
     {
       "scenario": "js-cart-progress",
@@ -516,8 +764,8 @@
       "cost_usd": 0.16366024999999998,
       "tokens_in": 69940,
       "tokens_out": 988,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-1281215544",
-      "steps": 3
+      "steps": 3,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-1281215544"
     },
     {
       "scenario": "go-coupon-sync-bug",
@@ -528,8 +776,8 @@
       "cost_usd": 0.007120840000000001,
       "tokens_in": 254884,
       "tokens_out": 1805,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-1028785018",
-      "steps": 16
+      "steps": 16,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-1028785018"
     },
     {
       "scenario": "go-coupon-sync-bug",
@@ -540,8 +788,8 @@
       "cost_usd": 0.007818805000000002,
       "tokens_in": 313900,
       "tokens_out": 1905,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-1273616997",
-      "steps": 18
+      "steps": 18,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-1273616997"
     },
     {
       "scenario": "go-coupon-sync-bug",
@@ -552,8 +800,8 @@
       "cost_usd": 0.008323869999999999,
       "tokens_in": 342727,
       "tokens_out": 2194,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-4124055506",
-      "steps": 20
+      "steps": 20,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-4124055506"
     },
     {
       "scenario": "go-currency-market",
@@ -564,8 +812,8 @@
       "cost_usd": 0.00764526,
       "tokens_in": 304119,
       "tokens_out": 1976,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-3465686448",
-      "steps": 14
+      "steps": 14,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-3465686448"
     },
     {
       "scenario": "go-currency-market",
@@ -576,8 +824,8 @@
       "cost_usd": 0.00768155,
       "tokens_in": 304980,
       "tokens_out": 1970,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-367876488",
-      "steps": 16
+      "steps": 16,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-367876488"
     },
     {
       "scenario": "go-currency-market",
@@ -588,8 +836,8 @@
       "cost_usd": 0.00743839,
       "tokens_in": 277119,
       "tokens_out": 1982,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-1839949651",
-      "steps": 15
+      "steps": 15,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-1839949651"
     },
     {
       "scenario": "go-graphql-optional-field",
@@ -600,8 +848,8 @@
       "cost_usd": 0.009607785,
       "tokens_in": 381300,
       "tokens_out": 3284,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-2221901485",
-      "steps": 19
+      "steps": 19,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-2221901485"
     },
     {
       "scenario": "go-graphql-optional-field",
@@ -612,8 +860,8 @@
       "cost_usd": 0.0075311,
       "tokens_in": 252804,
       "tokens_out": 2423,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-3474155595",
-      "steps": 12
+      "steps": 12,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-3474155595"
     },
     {
       "scenario": "go-graphql-optional-field",
@@ -624,8 +872,8 @@
       "cost_usd": 0.009279774999999999,
       "tokens_in": 374440,
       "tokens_out": 3161,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-1330554536",
-      "steps": 17
+      "steps": 17,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-1330554536"
     },
     {
       "scenario": "go-portlist",
@@ -636,8 +884,8 @@
       "cost_usd": 0.008421659999999997,
       "tokens_in": 308988,
       "tokens_out": 2960,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-3629870265",
-      "steps": 13
+      "steps": 13,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-3629870265"
     },
     {
       "scenario": "go-portlist",
@@ -648,8 +896,8 @@
       "cost_usd": 0.009260105000000001,
       "tokens_in": 373458,
       "tokens_out": 3181,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-3416693037",
-      "steps": 17
+      "steps": 17,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-3416693037"
     },
     {
       "scenario": "go-portlist",
@@ -660,8 +908,8 @@
       "cost_usd": 0.007644590000000001,
       "tokens_in": 249732,
       "tokens_out": 2837,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-2880215438",
-      "steps": 11
+      "steps": 11,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-2880215438"
     },
     {
       "scenario": "go-webhook-retry",
@@ -672,8 +920,8 @@
       "cost_usd": 0.006872625,
       "tokens_in": 248458,
       "tokens_out": 1724,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-4257154912",
-      "steps": 13
+      "steps": 13,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-4257154912"
     },
     {
       "scenario": "go-webhook-retry",
@@ -684,8 +932,8 @@
       "cost_usd": 0.006479345000000001,
       "tokens_in": 220231,
       "tokens_out": 1531,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-112268218",
-      "steps": 11
+      "steps": 11,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-112268218"
     },
     {
       "scenario": "go-webhook-retry",
@@ -696,8 +944,8 @@
       "cost_usd": 0.006417685,
       "tokens_in": 219469,
       "tokens_out": 1444,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-3817564598",
-      "steps": 11
+      "steps": 11,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-3817564598"
     },
     {
       "scenario": "js-cart-progress",
@@ -708,8 +956,8 @@
       "cost_usd": 0.005795604999999999,
       "tokens_in": 163563,
       "tokens_out": 1484,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-4252703777",
-      "steps": 8
+      "steps": 8,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-4252703777"
     },
     {
       "scenario": "js-cart-progress",
@@ -720,8 +968,8 @@
       "cost_usd": 0.006354375,
       "tokens_in": 217868,
       "tokens_out": 1484,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-743355523",
-      "steps": 10
+      "steps": 10,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-743355523"
     },
     {
       "scenario": "js-cart-progress",
@@ -732,8 +980,8 @@
       "cost_usd": 0.00748653,
       "tokens_in": 279492,
       "tokens_out": 2089,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-2717849241",
-      "steps": 13
+      "steps": 13,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-2717849241"
     },
     {
       "scenario": "go-coupon-sync-bug",
@@ -745,8 +993,8 @@
       "cost_usd": 0.0032428843999999994,
       "tokens_in": 201515,
       "tokens_out": 1245,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-902090586",
-      "steps": 7
+      "steps": 7,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-902090586"
     },
     {
       "scenario": "go-coupon-sync-bug",
@@ -758,8 +1006,8 @@
       "cost_usd": 0.0032516567999999997,
       "tokens_in": 244404,
       "tokens_out": 1627,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-1832342111",
-      "steps": 8
+      "steps": 8,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-1832342111"
     },
     {
       "scenario": "go-coupon-sync-bug",
@@ -771,8 +1019,8 @@
       "cost_usd": 0.0031376324,
       "tokens_in": 201409,
       "tokens_out": 1487,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-1110090587",
-      "steps": 6
+      "steps": 6,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-1110090587"
     },
     {
       "scenario": "go-currency-market",
@@ -784,8 +1032,8 @@
       "cost_usd": 0.0029573432000000004,
       "tokens_in": 196992,
       "tokens_out": 777,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-1545253038",
-      "steps": 5
+      "steps": 5,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-1545253038"
     },
     {
       "scenario": "go-currency-market",
@@ -797,8 +1045,8 @@
       "cost_usd": 0.0029504132,
       "tokens_in": 196987,
       "tokens_out": 730,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-986215312",
-      "steps": 5
+      "steps": 5,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-986215312"
     },
     {
       "scenario": "go-currency-market",
@@ -810,8 +1058,8 @@
       "cost_usd": 0.0030558444,
       "tokens_in": 236553,
       "tokens_out": 1206,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-3998243162",
-      "steps": 5
+      "steps": 5,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-3998243162"
     },
     {
       "scenario": "go-graphql-optional-field",
@@ -823,8 +1071,8 @@
       "cost_usd": 0.00403606,
       "tokens_in": 503266,
       "tokens_out": 4556,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-1435032091",
-      "steps": 14
+      "steps": 14,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-1435032091"
     },
     {
       "scenario": "go-graphql-optional-field",
@@ -836,8 +1084,8 @@
       "cost_usd": 0.0032300128,
       "tokens_in": 279568,
       "tokens_out": 1452,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-3225395303",
-      "steps": 7
+      "steps": 7,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-3225395303"
     },
     {
       "scenario": "go-graphql-optional-field",
@@ -849,8 +1097,8 @@
       "cost_usd": 0.0038781288000000005,
       "tokens_in": 457068,
       "tokens_out": 3885,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-3006753683",
-      "steps": 13
+      "steps": 13,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-3006753683"
     },
     {
       "scenario": "go-portlist",
@@ -862,8 +1110,8 @@
       "cost_usd": 0.0035471016000000006,
       "tokens_in": 444512,
       "tokens_out": 2091,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-1994210684",
-      "steps": 12
+      "steps": 12,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-1994210684"
     },
     {
       "scenario": "go-portlist",
@@ -875,8 +1123,8 @@
       "cost_usd": 0.0036591464,
       "tokens_in": 326906,
       "tokens_out": 3302,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-3225967873",
-      "steps": 8
+      "steps": 8,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-3225967873"
     },
     {
       "scenario": "go-portlist",
@@ -888,8 +1136,8 @@
       "cost_usd": 0.0031823008,
       "tokens_in": 239110,
       "tokens_out": 1897,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-3091567804",
-      "steps": 6
+      "steps": 6,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-3091567804"
     },
     {
       "scenario": "go-webhook-retry",
@@ -901,8 +1149,8 @@
       "cost_usd": 0.0038751636000000002,
       "tokens_in": 539757,
       "tokens_out": 2911,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-2580417238",
-      "steps": 15
+      "steps": 15,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-2580417238"
     },
     {
       "scenario": "go-webhook-retry",
@@ -914,8 +1162,8 @@
       "cost_usd": 0.0029829268,
       "tokens_in": 198433,
       "tokens_out": 741,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-3744368848",
-      "steps": 5
+      "steps": 5,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-3744368848"
     },
     {
       "scenario": "go-webhook-retry",
@@ -927,8 +1175,8 @@
       "cost_usd": 0.0029915367999999998,
       "tokens_in": 198516,
       "tokens_out": 761,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-1523207903",
-      "steps": 5
+      "steps": 5,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-1523207903"
     },
     {
       "scenario": "js-cart-progress",
@@ -940,8 +1188,8 @@
       "cost_usd": 0.002981006,
       "tokens_in": 198345,
       "tokens_out": 834,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-2936582386",
-      "steps": 6
+      "steps": 6,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-2936582386"
     },
     {
       "scenario": "js-cart-progress",
@@ -953,8 +1201,8 @@
       "cost_usd": 0.0029966832000000005,
       "tokens_in": 197210,
       "tokens_out": 949,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-3902455473",
-      "steps": 5
+      "steps": 5,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-3902455473"
     },
     {
       "scenario": "js-cart-progress",
@@ -966,8 +1214,8 @@
       "cost_usd": 0.0031505796000000003,
       "tokens_in": 197949,
       "tokens_out": 1177,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-3966107788",
-      "steps": 5
+      "steps": 5,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-3966107788"
     },
     {
       "scenario": "go-coupon-sync-bug",
@@ -979,8 +1227,8 @@
       "cost_usd": 0.020165846,
       "tokens_in": 289010,
       "tokens_out": 2688,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-889740708",
-      "steps": 8
+      "steps": 8,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-889740708"
     },
     {
       "scenario": "go-coupon-sync-bug",
@@ -992,8 +1240,8 @@
       "cost_usd": 0.018245466,
       "tokens_in": 201040,
       "tokens_out": 991,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-3338688563",
-      "steps": 7
+      "steps": 7,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-3338688563"
     },
     {
       "scenario": "go-coupon-sync-bug",
@@ -1005,8 +1253,8 @@
       "cost_usd": 0.018607936999999998,
       "tokens_in": 201715,
       "tokens_out": 1324,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-988097455",
-      "steps": 7
+      "steps": 7,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-coupon-sync-bug-988097455"
     },
     {
       "scenario": "go-currency-market",
@@ -1018,8 +1266,8 @@
       "cost_usd": 0.018975396000000002,
       "tokens_in": 317520,
       "tokens_out": 1662,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-880937354",
-      "steps": 7
+      "steps": 7,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-880937354"
     },
     {
       "scenario": "go-currency-market",
@@ -1031,8 +1279,8 @@
       "cost_usd": 0.018327101000000002,
       "tokens_in": 276477,
       "tokens_out": 1129,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-3774708150",
-      "steps": 6
+      "steps": 6,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-3774708150"
     },
     {
       "scenario": "go-currency-market",
@@ -1044,8 +1292,8 @@
       "cost_usd": 0.018558637,
       "tokens_in": 278871,
       "tokens_out": 1404,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-1830425810",
-      "steps": 8
+      "steps": 8,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-currency-market-1830425810"
     },
     {
       "scenario": "go-graphql-optional-field",
@@ -1057,8 +1305,8 @@
       "cost_usd": 0.018524011000000003,
       "tokens_in": 279845,
       "tokens_out": 1258,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-3563823108",
-      "steps": 8
+      "steps": 8,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-3563823108"
     },
     {
       "scenario": "go-graphql-optional-field",
@@ -1070,8 +1318,8 @@
       "cost_usd": 0.019595270999999997,
       "tokens_in": 202491,
       "tokens_out": 2769,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-511941877",
-      "steps": 7
+      "steps": 7,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-511941877"
     },
     {
       "scenario": "go-graphql-optional-field",
@@ -1083,8 +1331,8 @@
       "cost_usd": 0.018231052999999997,
       "tokens_in": 198029,
       "tokens_out": 1401,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-571083625",
-      "steps": 5
+      "steps": 5,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-graphql-optional-field-571083625"
     },
     {
       "scenario": "go-portlist",
@@ -1096,8 +1344,8 @@
       "cost_usd": 0.019473268000000005,
       "tokens_in": 358572,
       "tokens_out": 2208,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-2730988423",
-      "steps": 9
+      "steps": 9,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-2730988423"
     },
     {
       "scenario": "go-portlist",
@@ -1109,9 +1357,9 @@
       "cost_usd": 0.020793521999999995,
       "tokens_in": 330116,
       "tokens_out": 3737,
+      "steps": 9,
       "verify_log": "# portlist [portlist.test]\n./portlist_test.go:8:6: TestParseLsof redeclared in this block\n\t./portlist_bench_test.go:8:6: other declaration of TestParseLsof\nFAIL\tportlist [build failed]\nFAIL\n",
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-3644130579",
-      "steps": 9
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-3644130579"
     },
     {
       "scenario": "go-portlist",
@@ -1123,8 +1371,8 @@
       "cost_usd": 0.020033780000000005,
       "tokens_in": 406056,
       "tokens_out": 2466,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-1093653386",
-      "steps": 10
+      "steps": 10,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-portlist-1093653386"
     },
     {
       "scenario": "go-webhook-retry",
@@ -1136,9 +1384,9 @@
       "cost_usd": 0.020848622,
       "tokens_in": 289750,
       "tokens_out": 3674,
+      "steps": 8,
       "verify_log": "# webhooksvc [webhooksvc.test]\n./handler_bench_test.go:21:20: cannot use computeHMAC([]byte(body)) (value of type []byte) as string value in argument to do\n./handler_bench_test.go:37:20: cannot use computeHMAC([]byte(body)) (value of type []byte) as string value in argument to do\nFAIL\twebhooksvc [build failed]\nFAIL\n",
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-2277668920",
-      "steps": 8
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-2277668920"
     },
     {
       "scenario": "go-webhook-retry",
@@ -1150,9 +1398,9 @@
       "cost_usd": 0.018490661,
       "tokens_in": 199885,
       "tokens_out": 1533,
+      "steps": 6,
       "verify_log": "# webhooksvc [webhooksvc.test]\n./handler_bench_test.go:21:20: cannot use computeHMAC([]byte(body)) (value of type []byte) as string value in argument to do\n./handler_bench_test.go:37:20: cannot use computeHMAC([]byte(body)) (value of type []byte) as string value in argument to do\nFAIL\twebhooksvc [build failed]\nFAIL\n",
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-1830933970",
-      "steps": 6
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-1830933970"
     },
     {
       "scenario": "go-webhook-retry",
@@ -1164,9 +1412,9 @@
       "cost_usd": 0.019339201,
       "tokens_in": 282049,
       "tokens_out": 2045,
+      "steps": 8,
       "verify_log": "# webhooksvc [webhooksvc.test]\n./handler_bench_test.go:21:20: undefined: computeHMAC\n./handler_bench_test.go:37:20: undefined: computeHMAC\nFAIL\twebhooksvc [build failed]\nFAIL\n",
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-980012356",
-      "steps": 8
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-go-webhook-retry-980012356"
     },
     {
       "scenario": "js-cart-progress",
@@ -1178,8 +1426,8 @@
       "cost_usd": 0.01908084,
       "tokens_in": 241326,
       "tokens_out": 2181,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-4290161592",
-      "steps": 7
+      "steps": 7,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-4290161592"
     },
     {
       "scenario": "js-cart-progress",
@@ -1191,8 +1439,8 @@
       "cost_usd": 0.019010688999999997,
       "tokens_in": 320011,
       "tokens_out": 1536,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-901682389",
-      "steps": 9
+      "steps": 9,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-901682389"
     },
     {
       "scenario": "js-cart-progress",
@@ -1204,8 +1452,8 @@
       "cost_usd": 0.018913133000000002,
       "tokens_in": 278949,
       "tokens_out": 1709,
-      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-734687233",
-      "steps": 7
+      "steps": 7,
+      "work_dir": "/var/folders/tz/ssfkzx5x60j8mlm9125n74xm0000gn/T/ocbench-js-cart-progress-734687233"
     }
   ]
 }
